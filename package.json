@@ -1,0 +1,96 @@
+{
+  "name": "sumo-extension",
+  "displayName": "SuMo extension",
+  "description": "An extension to help developers to use and configure the SuMo tool.",
+  "version": "2.0.0",
+  "icon": "assets/icona-sumo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RiccardoFio/SuMo-npm-extension"
+  },
+  "engines": {
+    "vscode": "^1.46.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "menus": {
+      "editor/title": [
+        {
+          "command": "sumo-tool.nextResultsPage",
+          "group": "navigation"
+        },
+        {
+          "command": "sumo-tool.showResultsCommand",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "sumo-tool.configuration",
+        "title": "SuMo: Configuration"
+      },
+      {
+        "command": "sumo-tool.selectMutationOperators",
+        "title": "SuMo: Mutation Operators"
+      },
+      {
+        "command": "sumo-tool.setSuMoPath",
+        "title": "SuMo: Set SuMo directory path"
+      },
+      {
+        "command": "sumo-tool.runSumoCommand",
+        "title": "SuMo: Run"
+      },
+      {
+        "command": "sumo-tool.nextResultsPage",
+        "title": "SuMo: Next result page",
+        "icon": "$(arrow-right)"
+      },
+      {
+        "command": "sumo-tool.showResultsCommand",
+        "title": "SuMo: Show/hide test results",
+        "icon": "$(eye)"
+      }
+    ]
+  },
+  "scripts": {
+    "install:all": "npm install && cd webview-ui && npm install --legacy-peer-deps",
+    "start:webview": "cd webview-ui && npm run start",
+    "build:webview": "cd webview-ui && npm run build",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/node": "^12.20.55",
+    "@types/vscode": "^1.46.0",
+    "@types/mocha": "^10.0.0",
+    "@types/mochawesome": "^6.2.1",
+    "@types/chai": "^4.3.4",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.19.0",
+    "glob": "^7.1.6",
+    "mocha": "^10.0.0",
+    "mochawesome": "^7.1.3",
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.3",
+    "vscode-test": "^1.5.0",
+    "@vscode/test-electron": "^2.1.5",
+    "chai": "^4.3.7"
+  },
+  "dependencies": {
+    "@vscode/codicons": "^0.0.32"
+  }
+}

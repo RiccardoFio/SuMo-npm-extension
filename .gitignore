@@ -1,0 +1,55 @@
+node_modules
+.vscodeingnore
+CHANGELOG.md
+vsc-extension-quickstart.md
+out
+docs
+ToDo
+.vscode-test
+src/test/results
+src/test/test_sumo
+test-resources
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Compiled output
+webview-ui/dist
+webview-ui/build
+webview-ui/tmp
+webview-ui/out-tsc
+webview-ui/bazel-out
+
+# Node
+webview-ui/node_modules
+webview-ui/npm-debug.log
+webview-ui/yarn-error.log
+
+# IDEs and editors
+webview-ui/.idea/
+webview-ui/.project
+webview-ui/.classpath
+webview-ui/.c9/
+webview-ui/*.launch
+webview-ui/.settings/
+webview-ui/*.sublime-workspace
+
+# Visual Studio 
+webview-ui/.vscode/*
+webview-ui/!.vscode/settings.json
+webview-ui/!.vscode/tasks.json
+webview-ui/!.vscode/launch.json
+webview-ui/!.vscode/extensions.json
+webview-ui/.history/*
+
+# Miscellaneous
+webview-ui/.angular/cache
+webview-ui/.sass-cache/
+webview-ui/connect.lock
+webview-ui/coverage
+webview-ui/libpeerconnection.log
+webview-ui/testem.log
+webview-ui/typings
+
+# System files
+webview-ui/.DS_Store
+webview-ui/Thumbs.db

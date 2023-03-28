@@ -1,0 +1,109 @@
+<main>
+  <h1>{{title}}</h1>
+
+  <div>
+    <vscode-text-field id="sumoDir" size="70" readonly>
+      Sumo directory:
+      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+    </vscode-text-field>
+  </div>
+  <div>
+    <vscode-text-field id="projectDir" size="70" readonly>
+      Project directory:
+      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+    </vscode-text-field>
+    <vscode-button id="open-explore" appearance="secondary" (click)="openExplorer('project')">Open explorer
+    </vscode-button>
+  </div>
+
+  <vscode-radio-group orientation="vertical">
+    <label slot="label">Does your project follow this default structure?<br>
+      projectDir<br>
+      |--output<br>
+      |--contracts<br>
+      |--test<br>
+    </label>
+    <vscode-radio name="default" (click)="changeDefault()" checked>Yes</vscode-radio>
+    <vscode-radio name="default" (click)="changeDefault()">No</vscode-radio>
+  </vscode-radio-group>
+
+  <div [hidden]="sh">
+    <vscode-text-field id="buildDir" size="70" readonly>
+      Build directory:
+      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+    </vscode-text-field>
+    <vscode-button id="open-explore" appearance="secondary" (click)="openExplorer('build')">Open explorer
+    </vscode-button>
+  </div>
+
+  <div [hidden]="sh">
+    <vscode-text-field id="contractsDir" size="70" readonly>
+      Contracts directory:
+      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+    </vscode-text-field>
+    <vscode-button id="open-explore" appearance="secondary" (click)="openExplorer('contracts')">Open explorer
+    </vscode-button>
+  </div>
+
+  <div [hidden]="sh">
+    <vscode-text-field id="testDir" size="70" readonly>
+      Tests directory:
+      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+    </vscode-text-field>
+    <vscode-button id="open-explore" appearance="secondary" (click)="openExplorer('test')">Open explorer</vscode-button>
+  </div>
+
+  <vscode-divider></vscode-divider>
+
+  <vscode-text-area id="contractsFiles" rows="20" cols="50" hidden>Text Area Label</vscode-text-area>
+
+  <vscode-button id="build-contracts-tree" appearance="primary" (click)="buildTree('contractsFiles')" hidden>Build
+    tree</vscode-button>
+
+  <label><strong>Contracts to skip</strong></label>
+  <ngx-treeview [config]="config" [items]="contracts" (selectedChange)="skipContracts = $event"></ngx-treeview>
+
+  <vscode-text-area id="testFiles" rows="20" cols="50" hidden>Text Area Label</vscode-text-area>
+
+  <vscode-button id="build-test-tree" appearance="primary" (click)="buildTree('testFiles')" hidden>Build
+    tree</vscode-button>
+
+  <label><strong>Test to skip</strong></label>
+  <ngx-treeview [config]="config" [items]="tests" (selectedChange)="skipTests = $event"></ngx-treeview>
+
+  <vscode-divider></vscode-divider>
+
+  <vscode-text-field id="testingTimeOutInSec" type="tel" value="3000">Testing timeout (s)</vscode-text-field>
+
+  <label slot="label">network:</label>
+  <vscode-dropdown id="network">
+    <vscode-option>ganache</vscode-option>
+    <vscode-option>none</vscode-option>
+  </vscode-dropdown>
+
+  <label slot="label">testingFramework:</label>
+  <vscode-dropdown id="testingFramework">
+    <vscode-option>truffle</vscode-option>
+    <vscode-option>hardhat</vscode-option>
+    <vscode-option>forge</vscode-option>
+    <vscode-option>custom</vscode-option>
+  </vscode-dropdown>
+
+  <vscode-radio-group orientation="vertical">
+    <label slot="label">optimized:</label>
+    <vscode-radio name="optimized">Yes</vscode-radio>
+    <vscode-radio name="optimized">No</vscode-radio>
+  </vscode-radio-group>
+
+  <vscode-radio-group orientation="vertical">
+    <label slot="label">tce:</label>
+    <vscode-radio name="tce">Yes</vscode-radio>
+    <vscode-radio name="tce">No</vscode-radio>
+  </vscode-radio-group>
+
+  <vscode-button id="end-config" appearance="primary" (click)="endConfig()">End configuration</vscode-button>
+
+  <vscode-text-area id="actualConfig" rows="20" cols="50" hidden></vscode-text-area>
+
+  <vscode-button id="initialize-config" appearance="primary" (click)="initializeConfig()" hidden>Initialize</vscode-button>
+</main>

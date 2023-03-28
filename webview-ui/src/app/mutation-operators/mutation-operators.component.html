@@ -1,0 +1,35 @@
+<main>
+  <h1>Mutation operators selection</h1>
+
+  <div>
+    <vscode-text-field id="sumoDir" size="70" readonly>
+      Sumo directory:
+      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+    </vscode-text-field>
+    <vscode-text-field id="mutationOperators" size="70" readonly hidden>
+      Mutation Operators:
+      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+    </vscode-text-field>
+
+    <vscode-button id="built-checklist" appearance="primary" (click)="addCheckboxes()" hidden></vscode-button>
+  </div>
+
+  <label>
+    <input type="checkbox" id="toggleAll" (change)="toggle()" [checked]="isAllChecked()" />
+    <span>Enable/Disable All</span>
+  </label>
+
+  <vscode-divider></vscode-divider>
+
+  <div>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label formArrayName="operators" *ngFor="let operators of operatorsFormArray.controls; let i = index">
+        <input type="checkbox" [formControlName]="i">
+        <span>{{operatorsData[i].name + " - "}}</span>
+        <span>{{operatorsData[i].longName}}</span>
+        <br />
+      </label>
+    </form>
+  </div>
+  <vscode-button (click)="submit()">Confirm operators</vscode-button>
+</main>
