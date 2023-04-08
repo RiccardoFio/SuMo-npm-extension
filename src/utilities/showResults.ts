@@ -9,6 +9,8 @@ let activeEditor = vscode.window.activeTextEditor;
 let activeEditorFilename: string | undefined = activeEditor?.document.fileName;
 let activeDocument: vscode.TextDocument;
 
+let projectDir: string | undefined = undefined;
+
 const filters: string[] = [".json"];
 let filteredFiles: string[] = [];
 
@@ -18,7 +20,13 @@ let page: number = 0;
 let lastPage: number = 0;
 const nResultsForPage = 1000;
 
+/**
+ * show results variants
+ * @param projectPath the project directory path set by the user 
+ * @param operatorsStatus the type of results to be shown
+ *  */
 export async function showResultsVariants(projectPath: string, operatorsStatus: string[]) {
+	projectDir = projectPath;
 	allVariantsJson = [];
 	toShowVariantsJson = [];
 	filteredFiles = [];
@@ -66,8 +74,15 @@ function updateDecorations() {
 		activeEditor.setDecorations(vscode.window.createTextEditorDecorationType({}), []);
 		const foundVariants: vscode.DecorationOptions[] = [];
 		const foundLive: vscode.DecorationOptions[] = [];
+		var pathElements: string[];
+		var projectPathBaseDir: string = "";
+		if (typeof projectDir === 'string') {
+			pathElements = projectDir.replace(/\/$/, '').split('/');
+			projectPathBaseDir = pathElements[pathElements.length - 1]
+		}
 		toShowVariantsJson[page].forEach(variant => {
-			if (activeEditorFilename?.toLowerCase() === variant.file.toLowerCase()) {
+			let relativeVariantPath = variant.file.split(projectPathBaseDir)[1];
+			if (activeEditorFilename?.toLowerCase().endsWith(relativeVariantPath.toLowerCase())) {
 
 				const startPos = activeEditor ? activeEditor.document.positionAt(variant.start) : new vscode.Position(0, 0);
 				const endPos = activeEditor ? activeEditor.document.positionAt(variant.end) : new vscode.Position(0, 0);
@@ -84,8 +99,9 @@ function updateDecorations() {
 
 		if (liveDecorationType && variantDecorationType) {
 			//set decorations only if there is no LIVE mutators in the same line
-			activeEditor?.setDecorations(variantDecorationType, foundVariants.filter(function(entry1) {
-				return !foundLive.some(function(entry2) { return entry1.range.start.line === entry2.range.start.line;});}));
+			activeEditor?.setDecorations(variantDecorationType, foundVariants.filter(function (entry1) {
+				return !foundLive.some(function (entry2) { return entry1.range.start.line === entry2.range.start.line; });
+			}));
 			vscode.window.showInformationMessage(`INFO: You're visualizing page ${page + 1} out of ${lastPage + 1}!`);
 
 			//set decorations on LIVE mutators live
@@ -164,9 +180,9 @@ async function readJsonFile(path: string) {
 
 function createDiagnostic(range: vscode.Range, variant: any): vscode.Diagnostic {
 	const message = `Operator: ` + (variant.operator).trim() +
-		`, Original: ` + (variant.original).trim() +
-		`, Replace: ` + (variant.replace).trim() +
-		`, Status: ` + (variant.status).trim();
+		`, \nOriginal: ` + (variant.original).trim() +
+		`, \nReplacement: ` + (variant.replace).trim() +
+		`, \nStatus: ` + (variant.status).trim();
 	const diagnostic = new vscode.Diagnostic(
 		range,
 		message,
