@@ -18,8 +18,8 @@
 
   <vscode-radio-group orientation="vertical">
     <label slot="label">Does your project follow this default structure?<br>
-      projectDir<br>
-      |--output<br>
+      projectRoot<br>
+      |--build<br>
       |--contracts<br>
       |--test<br>
     </label>
@@ -105,5 +105,6 @@
 
   <vscode-text-area id="actualConfig" rows="20" cols="50" hidden></vscode-text-area>
 
-  <vscode-button id="initialize-config" appearance="primary" (click)="initializeConfig()" hidden>Initialize</vscode-button>
+  <vscode-button id="initialize-config" appearance="primary" (click)="initializeConfig()"
+    hidden>Initialize</vscode-button>
 </main>
