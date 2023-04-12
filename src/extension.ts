@@ -1,8 +1,8 @@
-import { readFileSync, copyFileSync } from "fs";
+import { readFileSync } from "fs";
 import * as vscode from "vscode";
 import { ConfigurationPanel } from "./panels/ConfigurationPanel";
 import { MutationOperatorsPanel } from "./panels/MutationOperatorsPanel";
-import { runSumoCommand, startWatcher, stopWatcher } from "./utilities/fireCommands";
+import { runSumoCommand, startWatcher } from "./utilities/fireCommands";
 import { dirFilesPathJSON, win32PathConverter } from "./utilities/getFilesPath";
 import { editorChanged, showResultsVariants, turnPage } from "./utilities/showResults";
 import { checkSuMoConfig, checkSuMoPath, clearRequireCache } from "./utilities/sumoPathHandler";
@@ -28,9 +28,8 @@ export async function activate(context: vscode.ExtensionContext) {
     if (wf !== undefined) {
       projectDir = win32PathConverter(wf[0].uri.path);
     }
-    clearRequireCache(projectDir + '/.sumo/config.js');
-    let actualConfig = require(projectDir + '/.sumo/config.js');
-    projectDir = actualConfig.projectDir;
+    clearRequireCache(projectDir + '/sumo-config.js');
+    let actualConfig = require(projectDir + '/sumo-config.js');
     buildDir = actualConfig.buildDir;
     contractsDir = actualConfig.contractsDir;
     testDir = actualConfig.testDir;
@@ -66,28 +65,11 @@ export async function activate(context: vscode.ExtensionContext) {
   testStatusBarItem.text = "$(debug-start) Run SuMo";
   testStatusBarItem.show();
 
-  //cache SuMoPath
-  let sumoPath: any = typeof context.globalState.get("SuMoPath") === "string" ? context.globalState.get("SuMoPath") : "";
+  //set SuMoPath from node_modules
+  let sumoPath: string = projectDir + "/node_modules/@morenabarboni/sumo";
 
   //check if SuMo path is correctly set othervwise the function return an error message
-  checkSuMoPath(sumoPath);
-
-  // Command for update the SuMo tool folder
-  const setSumoPathCommand = vscode.commands.registerCommand("sumo-tool.setSuMoPath", async () => {
-    let newSumoPath: any = await vscode.window.showOpenDialog({
-      title: "Select the folder where SuMo is installed",
-      canSelectFolders: true,
-      canSelectFiles: false,
-      canSelectMany: false,
-    });
-    newSumoPath === undefined ? newSumoPath = "" : newSumoPath = win32PathConverter(newSumoPath[0].path);
-
-    if (checkSuMoPath(newSumoPath)) {
-      sumoPath = newSumoPath;
-      context.globalState.update("SuMoPath", sumoPath);
-      vscode.window.showInformationMessage("SuMo folder correctly set!");
-    }
-  });
+  /*checkSuMoPath(sumoPath);*/
 
   // Command that provide a webview to edit/create the configuration file of SuMo
   const configurationCommand = vscode.commands.registerCommand("sumo-tool.configuration", async () => {
@@ -96,21 +78,18 @@ export async function activate(context: vscode.ExtensionContext) {
       const wf = vscode.workspace.workspaceFolders;
       if (wf !== undefined) {
         projectDir = win32PathConverter(wf[0].uri.path);
-        buildDir = projectDir + "/build";
-        contractsDir = projectDir + "/contracts";
-        testDir = projectDir + "/test";
+        buildDir = "build";
+        contractsDir = "contracts";
+        testDir = "test";
       } else {
-        vscode.window.showWarningMessage("WARNING: there isn't a folder opened in the VSCode workspace");
+        vscode.window.showWarningMessage("WARNING: there isn't a project opened in the VSCode workspace");
       }
       // search for a config.js inside the project, but if it isn't present it takes the sumo ones
       let actualConfig;
       try {
-        clearRequireCache(projectDir + '/.sumo/config.js');
-        actualConfig = require(projectDir + '/.sumo/config.js');
-      } catch (err) {
-        clearRequireCache(sumoPath + '/src/config.js');
-        actualConfig = require(sumoPath + '/src/config.js');
-      }
+        clearRequireCache(projectDir + '/sumo-config.js');
+        actualConfig = require(projectDir + '/sumo-config.js');
+      } catch (err) {}
       await delay(1500);
 
       //send data to the webview pannel
@@ -118,9 +97,8 @@ export async function activate(context: vscode.ExtensionContext) {
       ConfigurationPanel.sendDirPath("buildDir", buildDir);
       ConfigurationPanel.sendDirPath("contractsDir", contractsDir);
       ConfigurationPanel.sendDirPath("testDir", testDir);
-      ConfigurationPanel.sendDirPath("sumoDir", sumoPath);
-      ConfigurationPanel.sendDirFilesPath("contractsFiles", dirFilesPathJSON(contractsDir, [".sol"]));
-      ConfigurationPanel.sendDirFilesPath("testFiles", dirFilesPathJSON(testDir, [".js", ".ts", ".sol"]));
+      ConfigurationPanel.sendDirFilesPath("contractsFiles", dirFilesPathJSON(projectDir + "/" + contractsDir, [".sol"]));
+      ConfigurationPanel.sendDirFilesPath("testFiles", dirFilesPathJSON(projectDir + "/" + testDir, [".js", ".ts", ".sol"]));
       ConfigurationPanel.sendDirPath("actualConfig", JSON.stringify(actualConfig));
     }
   });
@@ -145,7 +123,6 @@ export async function activate(context: vscode.ExtensionContext) {
   const runSumoCommandCommand = vscode.commands.registerCommand("sumo-tool.runSumoCommand", async () => {
     if (projectDir !== "undefined") {
       if (checkSuMoPath(sumoPath) && checkSuMoConfig(projectDir)) {
-        copyFileSync(projectDir + '/.sumo/config.js', sumoPath + '/src/config.js');
 
         const command = await vscode.window.showQuickPick(
           ["preflight", "mutate", "pretest", "test", "diff", "restore"],
@@ -222,7 +199,6 @@ export async function activate(context: vscode.ExtensionContext) {
   // Add commands to the extension context
   context.subscriptions.push(configurationCommand);
   context.subscriptions.push(mutationOperatorsCommand);
-  context.subscriptions.push(setSumoPathCommand);
   context.subscriptions.push(runSumoCommandCommand);
   context.subscriptions.push(showResultsCommand);
   context.subscriptions.push(nextResultsPage);
@@ -242,11 +218,11 @@ function delay(ms: any) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function setProjectDir(config: any[]) {
+/*export function setProjectDir(config: any[]) {
   stopWatcher(projectDir);
   projectDir = config[0];
   buildDir = config[1];
   contractsDir = config[2];
   testDir = config[3];
   startWatcher(projectDir);
-}
+}*/

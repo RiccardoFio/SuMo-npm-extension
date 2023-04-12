@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import * as vscode from 'vscode';
-import { setProjectDir } from '../extension';
+//import { setProjectDir } from '../extension';
 import { checkSuMoPath } from './sumoPathHandler';
 
 /**
@@ -8,14 +8,13 @@ import { checkSuMoPath } from './sumoPathHandler';
  *
  */
 export function endConfig(config: any[]) {
+    let projectDir: string = config[0];
     // adds quotes to each element of the array to obtain the desired formattation
     config[4] = config[4].map((c: string) => { c = "'" + c + "'"; return c; });
     config[5] = config[5].map((c: string) => { c = "'" + c + "'"; return c; });
 
     // overwrite a file 
     let writeStr: string = `module.exports = { 
-			sumoDir: '${config[0]}/.sumo',
-			projectDir: '${config[0]}',
 			buildDir: '${config[1]}',
 			contractsDir: '${config[2]}',
 			testDir: '${config[3]}',
@@ -25,31 +24,24 @@ export function endConfig(config: any[]) {
             network: '${config[7]}',
             testingFramework: '${config[8]}',
             optimized: ${config[9]},
-            tce: ${config[10]},
-            contractsGlob: '/**/*.sol',
-            packageManagerGlob: ['/package-lock.json', '/yarn.lock'],
-            testsGlob:  '/**/*.{js,sol,ts}'
+            tce: ${config[10]}
 		}`;
     let writeData: Uint8Array = Buffer.from(writeStr, 'utf8');
-    //vscode.workspace.fs.writeFile(vscode.Uri.file(config[0] + "/.sumo/config.js"), writeData);
 
-    // console.log(config[7]);
     let checkUndifinedValue: boolean = false;
 
-    //check if there are undifined element
+    //check if there are undefined element
     config.forEach(element => {
         if (element === "undefined" || element === "") { checkUndifinedValue = true; }
     });
 
-    if (checkSuMoPath(config[11]) && !checkUndifinedValue) {
-        let sumoPath: any = config[11] + "/src/config.js";
+    if (!checkUndifinedValue) {
         try {
-            writeFileSync(sumoPath, writeData);
-            mkdirSync(config[0]+"/.sumo", { recursive: true});
-            writeFileSync(config[0]+"/.sumo/config.js", writeData,);
-            setProjectDir(config);
+            writeFileSync(projectDir + "/sumo-config.js", writeData);
+            //setProjectDir(config, projectDir);
             vscode.window.showInformationMessage("Configuration done correctly!");
         } catch (err) {
+            console.log(err);
             vscode.window.showErrorMessage("ERROR: Something went wrong!");
         }
     } else {

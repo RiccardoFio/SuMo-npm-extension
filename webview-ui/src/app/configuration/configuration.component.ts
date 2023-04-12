@@ -84,9 +84,9 @@ export class ConfigurationComponent {
         } else {
           let newPart;
           if ((i + 1) == paths.length) {
-            newPart = new TreeviewItem({ text: part, value: targetDirPath + "/" + partPath, checked: false });
+            newPart = new TreeviewItem({ text: part, value: partPath, checked: false });
           } else if ((j + 1) == path.length && paths[i + 1][j] != path[j]) {
-            newPart = new TreeviewItem({ text: part, value: targetDirPath + "/" + partPath, checked: false });
+            newPart = new TreeviewItem({ text: part, value: partPath, checked: false });
           } else {
             let children: TreeviewItem[] = [new TreeviewItem({ text: "", value: "", checked: false })];
             newPart = new TreeviewItem({ text: part, value: "", children: children, checked: false });
@@ -183,14 +183,18 @@ export class ConfigurationComponent {
   }
 
   openExplorer(dir: string) {
+    const projectDir = document.getElementById('projectDir') as HTMLInputElement | null;
+    const message: string = JSON.stringify({dir: dir, projectDir: projectDir?.value});
+
+    console.log(message);
+
     vscode.postMessage({
       command: "openExplorer",
-      text: dir
+      text: message
     });
   }
 
   endConfig() {
-    const sumodir = document.getElementById('sumoDir') as HTMLInputElement | null;
     const projectDir = document.getElementById('projectDir') as HTMLInputElement | null;
     const buildDir = document.getElementById('buildDir') as HTMLInputElement | null;
     const contractsDir = document.getElementById('contractsDir') as HTMLInputElement | null;
@@ -217,7 +221,6 @@ export class ConfigurationComponent {
         testingFramework?.text,
         optimized == "Yes" ? true : false,
         tce == "Yes" ? true : false,
-        sumodir?.value
       ]
     });
   }

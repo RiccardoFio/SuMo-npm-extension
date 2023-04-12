@@ -76,33 +76,37 @@ function updateDecorations() {
 		const foundLive: vscode.DecorationOptions[] = [];
 		var pathElements: string[];
 		var projectPathBaseDir: string = "";
+
 		if (typeof projectDir === 'string') {
 			pathElements = projectDir.replace(/\/$/, '').split('/');
-			projectPathBaseDir = pathElements[pathElements.length - 1]
+			projectPathBaseDir = pathElements[pathElements.length - 1];
 		}
-		toShowVariantsJson[page].forEach(variant => {
-			let relativeVariantPath = variant.file.split(projectPathBaseDir)[1];
-			if (activeEditorFilename?.toLowerCase().endsWith(relativeVariantPath.toLowerCase())) {
 
-				const startPos = activeEditor ? activeEditor.document.positionAt(variant.start) : new vscode.Position(0, 0);
-				const endPos = activeEditor ? activeEditor.document.positionAt(variant.end) : new vscode.Position(0, 0);
-				const range = new vscode.Range(startPos, endPos);
-
-				diagnostics.push(createDiagnostic(range, variant));
-
-				const decoration = {
-					range: new vscode.Range(startPos, startPos)
-				};
-				variant.status === "live" ? foundLive.push(decoration) : foundVariants.push(decoration);
-			}
-		});
-
+		if(toShowVariantsJson.length > 0) {
+			toShowVariantsJson[page].forEach(variant => {
+				let relativeVariantPath = variant.file.split(projectPathBaseDir)[1];
+				if (activeEditorFilename?.toLowerCase().endsWith(relativeVariantPath.toLowerCase())) {
+	
+					const startPos = activeEditor ? activeEditor.document.positionAt(variant.start) : new vscode.Position(0, 0);
+					const endPos = activeEditor ? activeEditor.document.positionAt(variant.end) : new vscode.Position(0, 0);
+					const range = new vscode.Range(startPos, endPos);
+	
+					diagnostics.push(createDiagnostic(range, variant));
+	
+					const decoration = {
+						range: new vscode.Range(startPos, startPos)
+					};
+					variant.status === "live" ? foundLive.push(decoration) : foundVariants.push(decoration);
+				}
+			});
+			vscode.window.showInformationMessage(`INFO: You're visualizing page ${page + 1} out of ${lastPage + 1}!`);
+		}
+		
 		if (liveDecorationType && variantDecorationType) {
 			//set decorations only if there is no LIVE mutators in the same line
 			activeEditor?.setDecorations(variantDecorationType, foundVariants.filter(function (entry1) {
 				return !foundLive.some(function (entry2) { return entry1.range.start.line === entry2.range.start.line; });
 			}));
-			vscode.window.showInformationMessage(`INFO: You're visualizing page ${page + 1} out of ${lastPage + 1}!`);
 
 			//set decorations on LIVE mutators live
 			activeEditor?.setDecorations(liveDecorationType, foundLive);
@@ -110,13 +114,6 @@ function updateDecorations() {
 		variantDiagnostics.set(activeDocument.uri, diagnostics);
 	}
 }
-
-// export function hideAliveVariants() {
-// 	variantsJson = [];
-// 	filteredFiles = [];
-// 	variantDiagnostics.clear();
-// 	triggerUpdateDecorations();
-// }
 
 function triggerUpdateDecorations(throttle = false) {
 	if (timeout) {

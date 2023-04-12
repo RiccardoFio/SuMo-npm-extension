@@ -41,10 +41,6 @@
         "title": "SuMo: Mutation Operators"
       },
       {
-        "command": "sumo-tool.setSuMoPath",
-        "title": "SuMo: Set SuMo directory path"
-      },
-      {
         "command": "sumo-tool.runSumoCommand",
         "title": "SuMo: Run"
       },

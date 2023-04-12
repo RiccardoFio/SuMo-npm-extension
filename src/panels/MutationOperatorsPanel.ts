@@ -1,7 +1,6 @@
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
 import { endConfigMutationOperators } from "../utilities/endCongif";
 import { getUri } from "../utilities/getUri";
-import { openExplorer } from "../utilities/openExplorer";
 
 
 export class MutationOperatorsPanel {

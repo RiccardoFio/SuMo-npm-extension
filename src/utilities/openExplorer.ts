@@ -1,15 +1,18 @@
 import { window } from "vscode";
 import { ConfigurationPanel } from "../panels/ConfigurationPanel";
-import { dirFilesPathJSON, checkIfDirIsPresent } from "./getFilesPath";
+import { dirFilesPathJSON, checkIfDirIsPresent, removeDirPathFromSigleFilePath } from "./getFilesPath";
 
 /**
  * A helper function which will get the webview URI of a given file or resource.
  *
  * @returns A URI pointing to the file/resource
  */
-export async function openExplorer(dir: string) {
+export async function openExplorer(message: string) {
+
+  let messageContent: any = JSON.parse(message);
+
   const choose = await window.showOpenDialog({
-    title: "Select the " + dir + " folder",
+    title: "Select the " + messageContent.dir + " folder",
     canSelectFolders: true,
     canSelectFiles: false,
     canSelectMany: false,
@@ -21,16 +24,19 @@ export async function openExplorer(dir: string) {
     path = "";
     window.showErrorMessage("ERROR: Something went wrong! Please try again :(");
   }
-  ConfigurationPanel.sendDirPath(dir + "Dir", path);
-  if (dir === "project") {
-    ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(path + "/build") ? path + "/build" : "undefined");
-    ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(path + "/contracts") ? path + "/contracts" : "undefined");
-    ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(path + "/test") ? path + "/test" : "undefined");
-    ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON(path + "/contracts", [".sol"]));
-    ConfigurationPanel.sendDirFilesPath("testFiles",dirFilesPathJSON(path + "/test", [".js", ".ts", ".sol"]));
-  } else if (dir === "contracts") {
+
+  if (messageContent.dir === "project") {
+    ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", path);
+    ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(path + "/build") ? "build" : "undefined");
+    ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(path + "/contracts") ? "contracts" : "undefined");
+    ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(path + "/test") ? "test" : "undefined");
+    ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON("contracts", [".sol"]));
+    ConfigurationPanel.sendDirFilesPath("testFiles",dirFilesPathJSON("test", [".js", ".ts", ".sol"]));
+  } else if (messageContent.dir === "contracts") {
     ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON(path, [".sol"]));
-  } else if (dir === "test"){
+  } else if (messageContent.dir === "test") {
     ConfigurationPanel.sendDirFilesPath("testFiles",dirFilesPathJSON(path, [".js", ".ts", ".sol"]));
+  } else {
+    ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));
   }
 }

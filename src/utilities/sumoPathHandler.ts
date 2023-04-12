@@ -4,11 +4,6 @@ import * as vscode from "vscode";
 import { win32PathConverter } from "./getFilesPath";
 
 export function checkSuMoPath(sumoPath: string) {
-  if (sumoPath === "") {
-    vscode.window.showErrorMessage("ERROR: SuMo folder not set! Please, run the setSumoPath command.");
-    return false;
-  }
-
   let nodeModulesDirIsPresent: boolean = false;
   let packageJsonIsPresent: boolean = false;
 
@@ -22,13 +17,13 @@ export function checkSuMoPath(sumoPath: string) {
       }
       if (file === 'package.json' && statSync(absolutePath).isFile()) {
         let packageJson = JSON.parse(readFileSync(absolutePath, 'utf8'));
-        if (packageJson.name === "SuMo") {
+        if (packageJson.name === "@morenabarboni/sumo") {
           packageJsonIsPresent = true;
         }
       }
     });
   } catch (err) {
-    vscode.window.showErrorMessage("ERROR: SuMo folder not correctly set! Please, run the setSumoPath command.");
+    vscode.window.showErrorMessage("ERROR: SuMo is not installed in your project! Follow the instructions on SuMo doc: https://github.com/MorenaBarboni/SuMo-SOlidity-MUtator");
     return false;
   }
 
@@ -36,22 +31,19 @@ export function checkSuMoPath(sumoPath: string) {
     return true;
   }
 
-  vscode.window.showErrorMessage("ERROR: This is not the SuMo folder or it is not installed yet! Follow the instructions on SuMo doc: https://github.com/MorenaBarboni/SuMo-SOlidity-MUtator");
+  vscode.window.showErrorMessage("ERROR: SuMo is not installed in your project! Follow the instructions on SuMo doc: https://github.com/MorenaBarboni/SuMo-SOlidity-MUtator");
   return false;
 }
 
 export function checkSuMoConfig(projectDir: string) {
   projectDir = win32PathConverter(projectDir);
   try {
-    clearRequireCache(projectDir + '/.sumo/config.js');
-    const projConf = require(projectDir + '/.sumo/config.js');
-    if (projConf.projectDir !== "" && projConf.buildDir !== "" && projConf.contractsDir !== "" && projConf.testDir !== "") {
-      return true;
-    }
-    return false;
+    clearRequireCache(projectDir + '/sumo-config.js');
+    const projConf = require(projectDir + '/sumo-config.js');
+    return true;
   }
   catch {
-    vscode.window.showErrorMessage("ERROR: Configuration not found! Run SuMo configuration command.");
+    vscode.window.showErrorMessage("ERROR: SuMo configuration file not found! Try to install SuMo inside your project.");
     return false;
   }
 }

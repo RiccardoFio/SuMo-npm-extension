@@ -145,9 +145,6 @@ export class ConfigurationPanel {
                     document.getElementById('testFiles').value = message.text;
                     document.getElementById('build-test-tree').click();
                     break;
-                case 'sumoDir':
-                    document.getElementById('sumoDir').value = message.text; 
-                    break;
                 case 'actualConfig':
                     document.getElementById('actualConfig').value = message.text;
                     document.getElementById('initialize-config').click();

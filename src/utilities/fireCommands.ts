@@ -29,13 +29,13 @@ export function runSumoCommand(sumoPath: string, command: string, firstParameter
     }
 
     if ((firstParameter === null || firstParameter === undefined) && (secondParameter === null || secondParameter === undefined)) {
-        sumoTerminal.sendText("npm --prefix " + sumoPath + " run sumo " + command);
+        sumoTerminal.sendText("npx sumo " + command);
     }
     else if ((firstParameter !== null || firstParameter !== undefined) && (secondParameter === null || secondParameter === undefined))  {
-        sumoTerminal.sendText("npm --prefix " + sumoPath + " run sumo " + command + " " + firstParameter);
+        sumoTerminal.sendText("npx sumo " + command + " " + firstParameter);
     }    
     else if ((firstParameter !== null || firstParameter !== undefined) && (secondParameter !== null || secondParameter !== undefined)) {
-        sumoTerminal.sendText("npm --prefix " + sumoPath + " run sumo " + command + " " + firstParameter + " " + secondParameter);
+        sumoTerminal.sendText("npx sumo " + command + " " + firstParameter + " " + secondParameter);
     }
 
     sumoTerminal.show();

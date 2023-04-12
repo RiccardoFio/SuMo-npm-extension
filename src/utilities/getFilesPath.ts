@@ -53,7 +53,7 @@ export function pathSplitIntoArrays(relativePaths: string[]) {
     return paths;
 }
 
-export function removeDirPathFromFilesPath(directoryPath: string, files: string[]) {
+export function removeDirPathFromMultipleFilesPath(directoryPath: string, files: string[]) {
     const relativePaths: any[] = [];
 
     files.forEach(element => {
@@ -61,6 +61,10 @@ export function removeDirPathFromFilesPath(directoryPath: string, files: string[
     });
 
     return relativePaths;
+}
+
+export function removeDirPathFromSigleFilePath(directoryPath: string, file: string) {
+    return file.replace(directoryPath, "").substring(1);
 }
 
 export function removeElementsDuplicationFromArray(array: any[]) {
@@ -102,7 +106,7 @@ export function dirFilesPathJSON(directoryPath: string, filters: string[]): stri
         });
 
         const paths: any[] = pathSplitIntoArrays(
-            removeDirPathFromFilesPath(directoryPath, filteredFiles));
+            removeDirPathFromMultipleFilesPath(directoryPath, filteredFiles));
 
         return JSON.stringify(removeElementsDuplicationFromArray(paths));
     }
