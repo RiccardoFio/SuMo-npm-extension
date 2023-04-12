@@ -20,7 +20,6 @@ suite('sumoPathHandler Test Suite', () => {
         fs.mkdirSync(fakeSumoPath + "/src");
         fs.writeFileSync(fakeSumoPath + '/package.json', "");
         fs.mkdirSync(fakeProjectPath);
-        fs.mkdirSync(fakeProjectPath + "/.sumo");
     });
 
     suiteTeardown(function () {
@@ -39,7 +38,7 @@ suite('sumoPathHandler Test Suite', () => {
         });
 
         test('should return false if node_modules folder is not present', () => {
-            fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"SuMo\"}");
+            fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"@morenabarboni/sumo\"}");
             expect(checkSuMoPath(fakeSumoPath)).to.be.false;
             fs.unlinkSync(fakeSumoPath + '/package.json');
         });
@@ -60,37 +59,28 @@ suite('sumoPathHandler Test Suite', () => {
 
         test('should return true if the sumo path is set correctly', () => {
             fs.mkdirSync(fakeSumoPath + '/node_modules');
-            fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"SuMo\"}");
+            fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"@morenabarboni/sumo\"}");
             expect(checkSuMoPath(fakeSumoPath)).to.be.true;
         });
     });
 
     suite("checkSumoConfig:Checks if SuMo configuration file is correctly sected", () => {
 
-        test('should return false if some fields on Project config are empty', () => {
-            let data = `module.exports = { 
-                projectDir: '',
-                buildDir: '',
-                contractsDir: '',
-                testDir: ''}`;
-            fs.writeFileSync(fakeProjectPath + '/.sumo/config.js', data);
-
+        test('should return false if config file not exist', () => {
             expect(checkSuMoConfig(fakeProjectPath)).to.be.false;
-            fs.unlinkSync(fakeProjectPath + '/.sumo/config.js');
         });
 
         test('should return true if all fields of configuration file are compiled', () => {
             let data: string = `module.exports = { 
-                projectDir: 'proj',
                 buildDir: 'build',
                 contractsDir: 'con',
                 testDir: 'test'
             }`;
             
-            fs.writeFileSync(fakeProjectPath + '/.sumo/config.js', data);
+            fs.writeFileSync(fakeProjectPath + '/sumo-config.js', data);
 
             expect(checkSuMoConfig(fakeProjectPath)).to.be.true;
-            fs.unlinkSync(fakeProjectPath + '/.sumo/config.js');
+            fs.unlinkSync(fakeProjectPath + '/sumo-config.js');
         });
     });
 });

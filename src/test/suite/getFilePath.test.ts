@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as vscode from 'vscode';
-import { filterFiles, win32PathConverter, pathSplitIntoArrays, removeDirPathFromFilesPath, dirFilesPathJSON, removeElementsDuplicationFromArray } from "../../utilities/getFilesPath";
+import { filterFiles, win32PathConverter, pathSplitIntoArrays, removeDirPathFromMultipleFilesPath, dirFilesPathJSON, removeElementsDuplicationFromArray } from "../../utilities/getFilesPath";
 
 suite('getFilePath Test Suite', () => {
 	vscode.window.showInformationMessage('Start all tests.');
@@ -40,7 +40,7 @@ suite('getFilePath Test Suite', () => {
 		test('Should remove the directory path from the files path', () => {
 			const dirPath = 'C:/Users/Test/sumo-tool/.sumo/baseline/contracts';
 			const files = ["C:/Users/Test/sumo-tool/.sumo/baseline/contracts/CovertLib.sol", "C:/Users/Test/sumo-tool/.sumo/baseline/contracts/MetaCoin.sol"];
-			expect(removeDirPathFromFilesPath(dirPath, files)).to.deep.equal(["/CovertLib.sol", "/MetaCoin.sol"]);
+			expect(removeDirPathFromMultipleFilesPath(dirPath, files)).to.deep.equal(["/CovertLib.sol", "/MetaCoin.sol"]);
 	
 		});
 	});

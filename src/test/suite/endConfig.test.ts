@@ -14,7 +14,7 @@ suite('SuMo Extension Test Suite', () => {
         fs.mkdirSync(fakeSumoPath);
         fs.mkdirSync(fakeSumoPath + "/src");
         fs.mkdirSync(fakeSumoPath + '/node_modules');
-        fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"SuMo\"}");
+        fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"@morenabarboni/sumo\"}");
     });
 
     suiteTeardown(function () {
@@ -24,31 +24,26 @@ suite('SuMo Extension Test Suite', () => {
     suite("endConfig: Setting the config files for SUMO tool", () => {
 
         test('Should write into the config.js file based on the user preferences', () => {
-            fs.writeFileSync(fakeSumoPath + '/src/config.js', "");
-            let config: any[] = ['/metacoin-box', '/build', '/contracts', '/test', ['contracts/Migrations.sol'],
-                ["/test/TestMetaCoin.sol"], '3000', 'ganache', 'truffle', true, false, fakeSumoPath];
+            fs.writeFileSync(fakeSumoPath + '/sumo-config.js', "");
+            let config: any[] = [fakeSumoPath, 'build', 'contracts', 'test', ['Migrations.sol'],
+                ["TestMetaCoin.sol"], '3000', 'ganache', 'truffle', true, false];
 
             endConfig(config);
 
             let expectedFileContent: string = `module.exports = { 
-                sumoDir: '/metacoin-box/.sumo',
-                projectDir: '/metacoin-box',
-                buildDir: '/build',
-                contractsDir: '/contracts',
-                testDir: '/test',
-                skipContracts: ['contracts/Migrations.sol'],
-                skipTests: ['/test/TestMetaCoin.sol'],
+                buildDir: 'build',
+                contractsDir: 'contracts',
+                testDir: 'test',
+                skipContracts: ['Migrations.sol'],
+                skipTests: ['TestMetaCoin.sol'],
                 testingTimeOutInSec: 3000,
                 network: 'ganache',
                 testingFramework: 'truffle',
                 optimized: true,
-                tce: false,
-                contractsGlob: '/**/*.sol',
-                packageManagerGlob: ['/package-lock.json', '/yarn.lock'],
-                testsGlob:  '/**/*.{js,sol,ts}'
+                tce: false
             }`.replace(/\s/g, '').trim();
 
-            let actualFileContent = fs.readFileSync(fakeSumoPath + "/src/config.js", 'utf8').replace(/\s/g, '').trim();
+            let actualFileContent = fs.readFileSync(fakeSumoPath + "/sumo-config.js", 'utf8').replace(/\s/g, '').trim();
 
             expect(actualFileContent).to.deep.equal(expectedFileContent);
         });
