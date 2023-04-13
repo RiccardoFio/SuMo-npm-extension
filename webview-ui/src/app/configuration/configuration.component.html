@@ -10,18 +10,7 @@
     </vscode-button>
   </div>
 
-  <vscode-radio-group orientation="vertical">
-    <label slot="label">Does your project follow this default structure?<br>
-      projectRoot<br>
-      |--build<br>
-      |--contracts<br>
-      |--test<br>
-    </label>
-    <vscode-radio name="default" (click)="changeDefault()" checked>Yes</vscode-radio>
-    <vscode-radio name="default" (click)="changeDefault()">No</vscode-radio>
-  </vscode-radio-group>
-
-  <div [hidden]="sh">
+  <div>
     <vscode-text-field id="buildDir" size="70" readonly>
       Build directory:
       <!-- <span slot="end" class="codicon codicon-folder"></span> -->
@@ -30,7 +19,7 @@
     </vscode-button>
   </div>
 
-  <div [hidden]="sh">
+  <div>
     <vscode-text-field id="contractsDir" size="70" readonly>
       Contracts directory:
       <!-- <span slot="end" class="codicon codicon-folder"></span> -->
@@ -39,7 +28,7 @@
     </vscode-button>
   </div>
 
-  <div [hidden]="sh">
+  <div>
     <vscode-text-field id="testDir" size="70" readonly>
       Tests directory:
       <!-- <span slot="end" class="codicon codicon-folder"></span> -->

@@ -33,8 +33,10 @@ export async function openExplorer(message: string) {
     ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON("contracts", [".sol"]));
     ConfigurationPanel.sendDirFilesPath("testFiles",dirFilesPathJSON("test", [".js", ".ts", ".sol"]));
   } else if (messageContent.dir === "contracts") {
+    ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));
     ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON(path, [".sol"]));
   } else if (messageContent.dir === "test") {
+    ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));
     ConfigurationPanel.sendDirFilesPath("testFiles",dirFilesPathJSON(path, [".js", ".ts", ".sol"]));
   } else {
     ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));

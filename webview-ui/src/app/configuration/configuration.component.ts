@@ -32,7 +32,6 @@ export class ConfigurationComponent {
 
   title = "SuMo tool configuration";
   default: string = 'Yes';
-  sh: any = true;
   config = TreeviewConfig.create({
     hasAllCheckBox: true,
     hasFilter: true,
@@ -170,12 +169,6 @@ export class ConfigurationComponent {
     actualConfig.skipTests.forEach((test: string) => {
       this.checkTrueIfPathIsPresent(this.tests, this.skipTests, test);
     });
-  }
-
-  async changeDefault() {
-    await this.delay(150);
-    const d: string = this.getOption('default');
-    d == "Yes" ? this.sh = true : this.sh = false;
   }
 
   delay(ms: number) {

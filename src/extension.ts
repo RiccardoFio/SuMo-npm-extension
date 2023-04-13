@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { ConfigurationPanel } from "./panels/ConfigurationPanel";
 import { MutationOperatorsPanel } from "./panels/MutationOperatorsPanel";
 import { runSumoCommand, startWatcher } from "./utilities/fireCommands";
-import { dirFilesPathJSON, win32PathConverter } from "./utilities/getFilesPath";
+import { checkIfDirIsPresent, dirFilesPathJSON, win32PathConverter } from "./utilities/getFilesPath";
 import { editorChanged, showResultsVariants, turnPage } from "./utilities/showResults";
 import { checkSuMoConfig, checkSuMoPath, clearRequireCache } from "./utilities/sumoPathHandler";
 
@@ -90,13 +90,13 @@ export async function activate(context: vscode.ExtensionContext) {
         clearRequireCache(projectDir + '/sumo-config.js');
         actualConfig = require(projectDir + '/sumo-config.js');
       } catch (err) {}
-      await delay(1500);
+      await delay(1000);
 
       //send data to the webview pannel
       ConfigurationPanel.sendDirPath("projectDir", projectDir);
-      ConfigurationPanel.sendDirPath("buildDir", buildDir);
-      ConfigurationPanel.sendDirPath("contractsDir", contractsDir);
-      ConfigurationPanel.sendDirPath("testDir", testDir);
+      ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(projectDir + "/build") ? buildDir : "undefined");
+      ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(projectDir + "/contracts") ? contractsDir : "undefined");
+      ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(projectDir + "/test") ? testDir : "undefined");
       ConfigurationPanel.sendDirFilesPath("contractsFiles", dirFilesPathJSON(projectDir + "/" + contractsDir, [".sol"]));
       ConfigurationPanel.sendDirFilesPath("testFiles", dirFilesPathJSON(projectDir + "/" + testDir, [".js", ".ts", ".sol"]));
       ConfigurationPanel.sendDirPath("actualConfig", JSON.stringify(actualConfig));
