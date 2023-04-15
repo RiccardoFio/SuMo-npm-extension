@@ -81,25 +81,31 @@ export async function activate(context: vscode.ExtensionContext) {
         buildDir = "build";
         contractsDir = "contracts";
         testDir = "test";
-      } else {
-        vscode.window.showWarningMessage("WARNING: there isn't a project opened in the VSCode workspace");
-      }
-      // search for a config.js inside the project, but if it isn't present it takes the sumo ones
+
+        // search for a config.js inside the project, but if it isn't present it takes the sumo ones
       let actualConfig;
       try {
         clearRequireCache(projectDir + '/sumo-config.js');
         actualConfig = require(projectDir + '/sumo-config.js');
+
+        //set last configuration folders if present
+        buildDir = actualConfig.buildDir !== "" ? actualConfig.buildDir : buildDir;
+        contractsDir = actualConfig.contractsDir !== "" ? actualConfig.contractsDir : contractsDir;
+        testDir = actualConfig.testDir !== "" ? actualConfig.testDir : testDir;
       } catch (err) {}
       await delay(1000);
 
       //send data to the webview pannel
       ConfigurationPanel.sendDirPath("projectDir", projectDir);
-      ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(projectDir + "/build") ? buildDir : "undefined");
-      ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(projectDir + "/contracts") ? contractsDir : "undefined");
-      ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(projectDir + "/test") ? testDir : "undefined");
+      ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(projectDir + "/" + buildDir) ? buildDir : "undefined");
+      ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(projectDir + "/" + contractsDir) ? contractsDir : "undefined");
+      ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(projectDir + "/" + testDir) ? testDir : "undefined");
       ConfigurationPanel.sendDirFilesPath("contractsFiles", dirFilesPathJSON(projectDir + "/" + contractsDir, [".sol"]));
       ConfigurationPanel.sendDirFilesPath("testFiles", dirFilesPathJSON(projectDir + "/" + testDir, [".js", ".ts", ".sol"]));
       ConfigurationPanel.sendDirPath("actualConfig", JSON.stringify(actualConfig));
+      } else {
+        vscode.window.showWarningMessage("WARNING: there isn't a project opened in the VSCode workspace");
+      }
     }
   });
 
