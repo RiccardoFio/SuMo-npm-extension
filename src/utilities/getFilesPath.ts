@@ -28,6 +28,7 @@ export function win32PathConverter(path: string) {
     if (process.platform === "win32") {
         if (path.charAt(0) === '/' || path.charAt(0) === '\\') {
             path = path.substring(process.platform === "win32" ? 1 : 0);
+            path = path.charAt(0).toLowerCase() + path.slice(1);
         }
         return path.replace(/[\\/]+/g, '/');
     } else {
