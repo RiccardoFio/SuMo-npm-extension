@@ -37,40 +37,30 @@ suite('sumoPathHandler Test Suite', () => {
 
         });
 
-        test('should return false if node_modules folder is not present', () => {
-            fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"@morenabarboni/sumo\"}");
+        test('should return false if package.json is not present', () => {
             expect(checkSuMoPath(fakeSumoPath)).to.be.false;
-            fs.unlinkSync(fakeSumoPath + '/package.json');
         });
 
-        test('should return false if package,json is not present', () => {
-            fs.mkdirSync(fakeSumoPath + '/node_modules');
-            expect(checkSuMoPath(fakeSumoPath)).to.be.false;
-            fs.rmSync(fakeSumoPath + '/node_modules', { recursive: true, force: true });
-        });
-
-        test('should return false if all present but project name is not "SuMo"', () => {
-            fs.mkdirSync(fakeSumoPath + '/node_modules');
+        test('should return false if  package.json is present but project name is not "SuMo"', () => {
             fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"No_SuMo\"}");
             expect(checkSuMoPath(fakeSumoPath)).to.be.false;
-            fs.rmSync(fakeSumoPath + '/node_modules', { recursive: true, force: true });
             fs.unlinkSync(fakeSumoPath + '/package.json');
         });
 
         test('should return true if the sumo path is set correctly', () => {
-            fs.mkdirSync(fakeSumoPath + '/node_modules');
             fs.writeFileSync(fakeSumoPath + '/package.json', "{\"name\":\"@morenabarboni/sumo\"}");
             expect(checkSuMoPath(fakeSumoPath)).to.be.true;
+            fs.unlinkSync(fakeSumoPath + '/package.json');
         });
     });
 
-    suite("checkSumoConfig:Checks if SuMo configuration file is correctly sected", () => {
+    suite("checkSumoConfig: Checks if SuMo configuration file is correctly sected", () => {
 
         test('should return false if config file not exist', () => {
             expect(checkSuMoConfig(fakeProjectPath)).to.be.false;
         });
 
-        test('should return true if all fields of configuration file are compiled', () => {
+        test('should return true if config file exist', () => {
             let data: string = `module.exports = { 
                 buildDir: 'build',
                 contractsDir: 'con',
