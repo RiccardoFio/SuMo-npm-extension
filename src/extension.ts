@@ -166,8 +166,6 @@ export async function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage("Command not recognized!");
             break;
         }
-      } else {
-        vscode.window.showErrorMessage("ERROR: SuMo is not configured!");
       }
     }
     else {

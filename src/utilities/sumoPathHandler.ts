@@ -4,31 +4,14 @@ import * as vscode from "vscode";
 import { win32PathConverter } from "./getFilesPath";
 
 export function checkSuMoPath(sumoPath: string) {
-  let nodeModulesDirIsPresent: boolean = false;
-  let packageJsonIsPresent: boolean = false;
-
   try {
-    readdirSync(sumoPath).forEach((file: any) => {
-
-      const absolutePath = join(sumoPath, file);
-
-      if (file === 'node_modules' && statSync(absolutePath).isDirectory()) {
-        nodeModulesDirIsPresent = true;
-      }
-      if (file === 'package.json' && statSync(absolutePath).isFile()) {
-        let packageJson = JSON.parse(readFileSync(absolutePath, 'utf8'));
-        if (packageJson.name === "@morenabarboni/sumo") {
-          packageJsonIsPresent = true;
-        }
-      }
-    });
+    let packageJson = JSON.parse(readFileSync(sumoPath + "/package.json", 'utf8'));
+    if (packageJson.name === "@morenabarboni/sumo") {
+      return true;
+    }
   } catch (err) {
     vscode.window.showErrorMessage("ERROR: SuMo is not installed in your project! Follow the instructions on SuMo doc: https://github.com/MorenaBarboni/SuMo-SOlidity-MUtator");
     return false;
-  }
-
-  if (nodeModulesDirIsPresent && packageJsonIsPresent) {
-    return true;
   }
 
   vscode.window.showErrorMessage("ERROR: SuMo is not installed in your project! Follow the instructions on SuMo doc: https://github.com/MorenaBarboni/SuMo-SOlidity-MUtator");
