@@ -25,14 +25,7 @@ export async function openExplorer(message: string) {
     window.showErrorMessage("ERROR: Something went wrong! Please try again :(");
   }
 
-  if (messageContent.dir === "project") {
-    ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", path);
-    ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(path + "/build") ? "build" : "undefined");
-    ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(path + "/contracts") ? "contracts" : "undefined");
-    ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(path + "/test") ? "test" : "undefined");
-    ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON("contracts", [".sol"]));
-    ConfigurationPanel.sendDirFilesPath("testFiles",dirFilesPathJSON("test", [".js", ".ts", ".sol"]));
-  } else if (messageContent.dir === "contracts") {
+  if (messageContent.dir === "contracts") {
     ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));
     ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON(path, [".sol"]));
   } else if (messageContent.dir === "test") {

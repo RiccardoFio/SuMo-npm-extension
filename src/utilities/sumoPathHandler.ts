@@ -1,5 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "fs";
-import { join } from "path";
+import { readFileSync } from "fs";
 import * as vscode from "vscode";
 import { win32PathConverter } from "./getFilesPath";
 

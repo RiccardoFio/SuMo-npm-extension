@@ -1,18 +1,16 @@
 <main>
   <h1>Mutation operators selection</h1>
 
-  <div>
-    <vscode-text-field id="sumoDir" size="70" readonly>
-      Sumo directory:
-      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
-    </vscode-text-field>
-    <vscode-text-field id="mutationOperators" size="70" readonly hidden>
-      Mutation Operators:
-      <!-- <span slot="end" class="codicon codicon-folder"></span> -->
-    </vscode-text-field>
+  <vscode-text-field id="sumoDir" size="70" readonly hidden>
+    Sumo directory:
+    <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+  </vscode-text-field>
+  <vscode-text-field id="mutationOperators" size="70" readonly hidden>
+    Mutation Operators:
+    <!-- <span slot="end" class="codicon codicon-folder"></span> -->
+  </vscode-text-field>
 
-    <vscode-button id="built-checklist" appearance="primary" (click)="addCheckboxes()" hidden></vscode-button>
-  </div>
+  <vscode-button id="built-checklist" appearance="primary" (click)="addCheckboxes()" hidden></vscode-button>
 
   <label>
     <input type="checkbox" id="toggleAll" (change)="toggle()" [checked]="isAllChecked()" />

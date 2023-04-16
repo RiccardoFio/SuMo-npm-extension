@@ -2,12 +2,10 @@
   <h1>{{title}}</h1>
 
   <div>
-    <vscode-text-field id="projectDir" size="70" readonly>
+    <vscode-text-field id="projectDir" size="70" readonly hidden>
       Project directory:
       <!-- <span slot="end" class="codicon codicon-folder"></span> -->
     </vscode-text-field>
-    <vscode-button id="open-explore" appearance="secondary" (click)="openExplorer('project')">Open explorer
-    </vscode-button>
   </div>
 
   <div>
