@@ -20,17 +20,17 @@ export async function openExplorer(message: string) {
   let path;
   if (choose !== undefined) {
     path = win32PathConverter(choose[0].path);
-  } else {
-    path = "";
-    window.showErrorMessage("ERROR: Something went wrong! Please try again :(");
+  }
+  else {
+    return;
   }
 
   if (messageContent.dir === "contracts") {
     ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));
-    ConfigurationPanel.sendDirFilesPath("contractsFiles",dirFilesPathJSON(path, [".sol"]));
+    ConfigurationPanel.sendDirFilesPath("contractsFiles", dirFilesPathJSON(path, [".sol"]));
   } else if (messageContent.dir === "test") {
     ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));
-    ConfigurationPanel.sendDirFilesPath("testFiles",dirFilesPathJSON(path, [".js", ".ts", ".sol"]));
+    ConfigurationPanel.sendDirFilesPath("testFiles", dirFilesPathJSON(path, [".js", ".ts", ".sol"]));
   } else {
     ConfigurationPanel.sendDirPath(messageContent.dir + "Dir", removeDirPathFromSigleFilePath(messageContent.projectDir, path));
   }
