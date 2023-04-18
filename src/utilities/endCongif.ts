@@ -1,12 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import * as vscode from 'vscode';
-//import { setProjectDir } from '../extension';
 import { checkSuMoPath } from './sumoPathHandler';
 
-/**
- * A helper function which will get the webview URI of a given file or resource.
- *
- */
 export function endConfig(config: any[]) {
     let projectDir: string = config[0];
     // adds quotes to each element of the array to obtain the desired formattation

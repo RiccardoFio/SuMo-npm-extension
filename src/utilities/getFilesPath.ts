@@ -1,6 +1,5 @@
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
-const path = require("path");
 
 let allFilesAndSubdirectories: string[] = [];
 

@@ -30,7 +30,7 @@ export function checkSuMoConfig(projectDir: string) {
   }
 }
 
-// clear cache require function
+// clear the cache of require function (update file content)
 export function clearRequireCache(file: string) {
   Object.keys(require.cache).forEach(function (key) {
     if (win32PathConverter(key) === file) {

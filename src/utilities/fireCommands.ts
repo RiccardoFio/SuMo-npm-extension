@@ -45,7 +45,7 @@ export function runSumoCommand(sumoPath: string, command: string, firstParameter
 function showResults(projectPath: string) {
     switch (lastCommand) {
         case "test":
-            // if last line og report.txt include "Mutation Score" 
+            // if last line og report.txt include "SuMo test done" 
             try {
                 const reportEnd = readFileSync(join(projectPath, ".sumo/results/report.txt"), 'utf8').substring(-17);
                 if (reportEnd.includes("SuMo test done")) { showResultsVariants(projectPath, ['live']); }

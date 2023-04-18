@@ -163,7 +163,6 @@ export async function activate(context: vscode.ExtensionContext) {
             runSumoCommand(sumoPath, command);
             break;
           default:
-            vscode.window.showErrorMessage("Command not recognized!");
             break;
         }
       }
