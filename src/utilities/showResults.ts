@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'fs';
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { liveDecorationType, variantDecorationType, variantDiagnostics } from '../extension';
 import { filterFiles, win32PathConverter } from './getFilesPath';
 
@@ -82,17 +83,19 @@ function updateDecorations() {
 			projectPathBaseDir = pathElements[pathElements.length - 1];
 		}
 
-		if(toShowVariantsJson.length > 0) {
+		if (toShowVariantsJson.length > 0) {
 			toShowVariantsJson[page].forEach(variant => {
-				let relativeVariantPath = variant.file.split(projectPathBaseDir)[1];
-				if (activeEditorFilename?.toLowerCase().endsWith(relativeVariantPath.toLowerCase())) {
-	
+
+				let variantFileName = path.basename(variant.file);
+
+				if (activeEditorFilename?.toLowerCase().endsWith(variantFileName.toLowerCase())) {
+
 					const startPos = activeEditor ? activeEditor.document.positionAt(variant.start) : new vscode.Position(0, 0);
 					const endPos = activeEditor ? activeEditor.document.positionAt(variant.end) : new vscode.Position(0, 0);
 					const range = new vscode.Range(startPos, endPos);
-	
+
 					diagnostics.push(createDiagnostic(range, variant));
-	
+
 					const decoration = {
 						range: new vscode.Range(startPos, startPos)
 					};
@@ -101,7 +104,7 @@ function updateDecorations() {
 			});
 			vscode.window.showInformationMessage(`INFO: You're visualizing page ${page + 1} out of ${lastPage + 1}!`);
 		}
-		
+
 		if (liveDecorationType && variantDecorationType) {
 			//set decorations only if there is no LIVE mutators in the same line
 			activeEditor?.setDecorations(variantDecorationType, foundVariants.filter(function (entry1) {
