@@ -137,16 +137,16 @@ export class ConfigurationComponent {
         if (frameworkSelect.options[index]?.ariaLabel == actualConfig.testingFramework)
           frameworkSelect.selectedIndex = index;
     }
-    if (actualConfig.optimized) {
-      document.getElementsByName('optimized')[0].ariaChecked = "true";
-      document.getElementsByName('optimized')[0].setAttribute("current-checked", "true");
-      document.getElementsByName('optimized')[1].ariaChecked = "false";
-      document.getElementsByName('optimized')[1].setAttribute("current-checked", "false");
-    } else if (!actualConfig.optimized) {
-      document.getElementsByName('optimized')[0].ariaChecked = "false";
-      document.getElementsByName('optimized')[0].setAttribute("current-checked", "false");
-      document.getElementsByName('optimized')[1].ariaChecked = "true";
-      document.getElementsByName('optimized')[1].setAttribute("current-checked", "true");
+    if (actualConfig.minimal) {
+      document.getElementsByName('minimal')[0].ariaChecked = "true";
+      document.getElementsByName('minimal')[0].setAttribute("current-checked", "true");
+      document.getElementsByName('minimal')[1].ariaChecked = "false";
+      document.getElementsByName('minimal')[1].setAttribute("current-checked", "false");
+    } else if (!actualConfig.minimal) {
+      document.getElementsByName('minimal')[0].ariaChecked = "false";
+      document.getElementsByName('minimal')[0].setAttribute("current-checked", "false");
+      document.getElementsByName('minimal')[1].ariaChecked = "true";
+      document.getElementsByName('minimal')[1].setAttribute("current-checked", "true");
     }
     if (actualConfig.tce) {
       document.getElementsByName('tce')[0].ariaChecked = "true";
@@ -197,7 +197,7 @@ export class ConfigurationComponent {
     const network = networkSelect?.options[networkSelect?.selectedIndex];
     const testingFrameworkSelect = document.getElementById('testingFramework') as HTMLSelectElement | null;
     const testingFramework = testingFrameworkSelect?.options[testingFrameworkSelect?.selectedIndex];
-    const optimized: string = this.getOption('optimized');
+    const minimal: string = this.getOption('minimal');
     const tce: string = this.getOption('tce');
     
     vscode.postMessage({
@@ -212,7 +212,7 @@ export class ConfigurationComponent {
         testingTimeOutInSec?.value,
         network?.text,
         testingFramework?.text,
-        optimized == "Yes" ? true : false,
+        minimal == "Yes" ? true : false,
         tce == "Yes" ? true : false,
       ]
     });
