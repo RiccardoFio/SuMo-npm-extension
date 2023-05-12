@@ -18,7 +18,7 @@ let allVariantsJson: any[] = [];
 let toShowVariantsJson: any[][] = [];
 let page: number = 0;
 let lastPage: number = 0;
-const nResultsForPage = 1000;
+const nResultsForPage = 480;
 
 /**
  * show results variants
@@ -144,7 +144,8 @@ export function editorChanged(editor: vscode.TextEditor) {
 }
 
 function filterVariantsPerFile(filename: string) {
-	const resultsArray = allVariantsJson.filter(a => String(a.file).endsWith(filename));
+	let resultsArray = allVariantsJson.filter(a => String(a.file).endsWith(filename)).sort((a,b) => a.start - b.start);;
+
 	let r = 0;
 	for (let index = 0; index < Math.ceil(resultsArray.length / nResultsForPage); index++) {
 		toShowVariantsJson[index] = [];
