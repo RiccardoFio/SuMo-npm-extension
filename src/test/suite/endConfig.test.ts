@@ -39,7 +39,7 @@ suite('SuMo Extension Test Suite', () => {
                 testingTimeOutInSec: 3000,
                 network: 'ganache',
                 testingFramework: 'truffle',
-                optimized: true,
+                minimal: true,
                 tce: false
             }`.replace(/\s/g, '').trim();
 

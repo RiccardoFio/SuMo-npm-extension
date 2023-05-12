@@ -18,7 +18,7 @@ export function endConfig(config: any[]) {
             testingTimeOutInSec: ${config[6]},
             network: '${config[7]}',
             testingFramework: '${config[8]}',
-            optimized: ${config[9]},
+            minimal: ${config[9]},
             tce: ${config[10]}
 		}`;
     let writeData: Uint8Array = Buffer.from(writeStr, 'utf8');
