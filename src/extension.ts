@@ -9,8 +9,9 @@ import { checkSuMoConfig, checkSuMoPath, clearRequireCache } from "./utilities/s
 
 let testStatusBarItem: vscode.StatusBarItem;
 export let extensionUri: vscode.Uri;
-export let variantDecorationType: vscode.TextEditorDecorationType;
+export let multipleVariantsDecorationType: vscode.TextEditorDecorationType;
 export let liveDecorationType: vscode.TextEditorDecorationType;
+export let variantDecorationType: vscode.TextEditorDecorationType;
 
 export const variantDiagnostics = vscode.languages.createDiagnosticCollection("variants");
 
@@ -40,15 +41,21 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(variantDiagnostics);
   extensionUri = context.extensionUri;
 
-  // create a decorator type that we use to decorate variants
-  variantDecorationType = vscode.window.createTextEditorDecorationType({
-    gutterIconPath: vscode.Uri.joinPath(extensionUri, "assets", "variants-sumo.png"),
+  // create a decorator type that we use to decorate when there are multiple variants in the same line
+  multipleVariantsDecorationType = vscode.window.createTextEditorDecorationType({
+    gutterIconPath: vscode.Uri.joinPath(extensionUri, "assets", "multiple-variants-sumo.png"),
     gutterIconSize: "contain"
   });
 
   // create a decorator type that we use to decorate LIVE mutators
   liveDecorationType = vscode.window.createTextEditorDecorationType({
     gutterIconPath: vscode.Uri.joinPath(extensionUri, "assets", "live-sumo.png"),
+    gutterIconSize: "contain"
+  });
+
+  // create a decorator type that we use to decorate variants
+  variantDecorationType = vscode.window.createTextEditorDecorationType({
+    gutterIconPath: vscode.Uri.joinPath(extensionUri, "assets", "variants-sumo.png"),
     gutterIconSize: "contain"
   });
 
@@ -83,26 +90,26 @@ export async function activate(context: vscode.ExtensionContext) {
         testDir = "test";
 
         // search for a config.js inside the project, but if it isn't present it takes the sumo ones
-      let actualConfig;
-      try {
-        clearRequireCache(projectDir + '/sumo-config.js');
-        actualConfig = require(projectDir + '/sumo-config.js');
+        let actualConfig;
+        try {
+          clearRequireCache(projectDir + '/sumo-config.js');
+          actualConfig = require(projectDir + '/sumo-config.js');
 
-        //set last configuration folders if present
-        buildDir = actualConfig.buildDir !== "" ? actualConfig.buildDir : buildDir;
-        contractsDir = actualConfig.contractsDir !== "" ? actualConfig.contractsDir : contractsDir;
-        testDir = actualConfig.testDir !== "" ? actualConfig.testDir : testDir;
-      } catch (err) {}
-      await delay(1000);
+          //set last configuration folders if present
+          buildDir = actualConfig.buildDir !== "" ? actualConfig.buildDir : buildDir;
+          contractsDir = actualConfig.contractsDir !== "" ? actualConfig.contractsDir : contractsDir;
+          testDir = actualConfig.testDir !== "" ? actualConfig.testDir : testDir;
+        } catch (err) { }
+        await delay(1000);
 
-      //send data to the webview pannel
-      ConfigurationPanel.sendDirPath("projectDir", projectDir);
-      ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(projectDir + "/" + buildDir) ? buildDir : "undefined");
-      ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(projectDir + "/" + contractsDir) ? contractsDir : "undefined");
-      ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(projectDir + "/" + testDir) ? testDir : "undefined");
-      ConfigurationPanel.sendDirFilesPath("contractsFiles", dirFilesPathJSON(projectDir + "/" + contractsDir, [".sol"]));
-      ConfigurationPanel.sendDirFilesPath("testFiles", dirFilesPathJSON(projectDir + "/" + testDir, [".js", ".ts", ".sol"]));
-      ConfigurationPanel.sendDirPath("actualConfig", JSON.stringify(actualConfig));
+        //send data to the webview pannel
+        ConfigurationPanel.sendDirPath("projectDir", projectDir);
+        ConfigurationPanel.sendDirPath("buildDir", checkIfDirIsPresent(projectDir + "/" + buildDir) ? buildDir : "undefined");
+        ConfigurationPanel.sendDirPath("contractsDir", checkIfDirIsPresent(projectDir + "/" + contractsDir) ? contractsDir : "undefined");
+        ConfigurationPanel.sendDirPath("testDir", checkIfDirIsPresent(projectDir + "/" + testDir) ? testDir : "undefined");
+        ConfigurationPanel.sendDirFilesPath("contractsFiles", dirFilesPathJSON(projectDir + "/" + contractsDir, [".sol"]));
+        ConfigurationPanel.sendDirFilesPath("testFiles", dirFilesPathJSON(projectDir + "/" + testDir, [".js", ".ts", ".sol"]));
+        ConfigurationPanel.sendDirPath("actualConfig", JSON.stringify(actualConfig));
       } else {
         vscode.window.showWarningMessage("WARNING: there isn't a project opened in the VSCode workspace");
       }
@@ -149,7 +156,7 @@ export async function activate(context: vscode.ExtensionContext) {
             break;
           case 'diff':
             const hash = await getMutantHash("Insert the hash of the Mutant that you want to check");
-            if(hash !== undefined) {runSumoCommand(sumoPath, command, hash);}
+            if (hash !== undefined) { runSumoCommand(sumoPath, command, hash); }
             break;
           case 'pretest':
             runSumoCommand(sumoPath, command);

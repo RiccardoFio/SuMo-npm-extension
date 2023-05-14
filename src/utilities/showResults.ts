@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from 'fs';
 import * as vscode from 'vscode';
-import { liveDecorationType, variantDecorationType, variantDiagnostics } from '../extension';
+import { liveDecorationType, multipleVariantsDecorationType, variantDecorationType, variantDiagnostics } from '../extension';
 import { filterFiles, win32PathConverter } from './getFilesPath';
 
 let timeout: NodeJS.Timer | undefined = undefined;
@@ -103,17 +103,31 @@ function updateDecorations() {
 		}
 		
 		if (liveDecorationType && variantDecorationType) {
+
+			//set decorations on line where there are multiple mutators
+			activeEditor?.setDecorations(multipleVariantsDecorationType, filterMoreVariantsSameLine(foundVariants.concat(foundLive)));
+
+			//set decorations on LIVE mutators live
+			activeEditor?.setDecorations(liveDecorationType, foundLive);
+
 			//set decorations only if there is no LIVE mutators in the same line
 			activeEditor?.setDecorations(variantDecorationType, foundVariants.filter(function (entry1) {
 				return !foundLive.some(function (entry2) { return entry1.range.start.line === entry2.range.start.line; });
 			}));
-
-			//set decorations on LIVE mutators live
-			activeEditor?.setDecorations(liveDecorationType, foundLive);
 		}
 		variantDiagnostics.set(activeDocument.uri, diagnostics);
 	}
 }
+
+function filterMoreVariantsSameLine(variantsDecoration: vscode.DecorationOptions[]): vscode.DecorationOptions[] {
+	const sameLines = variantsDecoration.filter((variant, index, arr) =>
+	  arr.some((p, i) => i !== index && p.range.start.line === variant.range.start.line)
+	);
+  
+	return variantsDecoration.filter(variant =>
+	  sameLines.some(p => p.range.start.line === variant.range.start.line)
+	);
+  }
 
 function triggerUpdateDecorations(throttle = false) {
 	if (timeout) {
