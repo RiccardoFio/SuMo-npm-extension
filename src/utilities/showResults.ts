@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'fs';
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { liveDecorationType, multipleVariantsDecorationType, variantDecorationType, variantDiagnostics } from '../extension';
 import { filterFiles, win32PathConverter } from './getFilesPath';
 
@@ -82,10 +83,12 @@ function updateDecorations() {
 			projectPathBaseDir = pathElements[pathElements.length - 1];
 		}
 
-		if(toShowVariantsJson.length > 0) {
+		if (toShowVariantsJson.length > 0) {
 			toShowVariantsJson[page].forEach(variant => {
-				let relativeVariantPath = variant.file.split(projectPathBaseDir)[1];
-				if (activeEditorFilename?.toLowerCase().endsWith(relativeVariantPath.toLowerCase())) {
+
+				let variantFileName = path.basename(variant.file);
+
+				if (activeEditorFilename?.toLowerCase().endsWith(variantFileName.toLowerCase())) {
 	
 					const startPos = activeEditor ? activeEditor.document.positionAt(variant.start) : new vscode.Position(0, 0);
 					const endPos = activeEditor ? activeEditor.document.positionAt(variant.end) : new vscode.Position(0, 0);
