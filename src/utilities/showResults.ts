@@ -38,7 +38,7 @@ export async function showResultsVariants(projectPath: string, operatorsStatus: 
 		try {
 			operatorsStatus.forEach(status => {
 				//find all files recursively in a directory
-				let operatorsToShowPath = projectPath + '/.sumo/results/' + status + '/';
+				let operatorsToShowPath = projectPath + '/sumo/results/' + status + '/';
 				let allOperators = readdirSync(operatorsToShowPath);
 				//filter the files list
 				filters.forEach(filter => {
@@ -58,7 +58,7 @@ export async function showResultsVariants(projectPath: string, operatorsStatus: 
 			});
 
 		} catch {
-			vscode.window.showErrorMessage("ERROR: '.sumo/results/' folder/subfolders does not exist!");
+			vscode.window.showErrorMessage("ERROR: 'sumo/results/' folder/subfolders does not exist!");
 		}
 	}
 	if (activeEditor) {

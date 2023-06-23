@@ -8,13 +8,13 @@ let lastCommand: string;
 
 //watcher for the visualization of results if some SuMo command is run outside the extension
 export function startWatcher(projectPath: string) {
-    watchFile(join(projectPath, ".sumo/results/report.txt"), (curr, prev) => {
+    watchFile(join(projectPath, "sumo/results/report.txt"), (curr, prev) => {
         showResults(projectPath);
     });
 }
 
 export function stopWatcher(projectPath: string) {
-    if (projectPath !== "") { unwatchFile(join(projectPath, ".sumo/results/report.txt")); }
+    if (projectPath !== "") { unwatchFile(join(projectPath, "sumo/results/report.txt")); }
 }
 
 export function runSumoCommand(sumoPath: string, command: string, firstParameter?: any, secondParameter?: any) {
@@ -47,12 +47,12 @@ function showResults(projectPath: string) {
         case "test":
             // if last line og report.txt include "SuMo test done" 
             try {
-                const reportEnd = readFileSync(join(projectPath, ".sumo/results/report.txt"), 'utf8').substring(-17);
+                const reportEnd = readFileSync(join(projectPath, "sumo/results/report.txt"), 'utf8').substring(-17);
                 if (reportEnd.includes("SuMo test done")) { showResultsVariants(projectPath, ['live']); }
             } catch (error) { }
             break;
         case "preflight":
-            var setting: vscode.Uri = vscode.Uri.parse("file:" + projectPath + "/.sumo/results/generated.csv");
+            var setting: vscode.Uri = vscode.Uri.parse("file:" + projectPath + "/sumo/results/generated.csv");
             vscode.workspace.openTextDocument(setting).then((a: vscode.TextDocument) => {
                 vscode.window.showTextDocument(a, 1, false);
             });

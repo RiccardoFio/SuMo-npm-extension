@@ -38,8 +38,8 @@ suite('getFilePath Test Suite', () => {
 	
 	suite('removeDirPathFromFilesPath', () =>  {
 		test('Should remove the directory path from the files path', () => {
-			const dirPath = 'C:/Users/Test/sumo-tool/.sumo/baseline/contracts';
-			const files = ["C:/Users/Test/sumo-tool/.sumo/baseline/contracts/CovertLib.sol", "C:/Users/Test/sumo-tool/.sumo/baseline/contracts/MetaCoin.sol"];
+			const dirPath = 'C:/Users/Test/sumo-tool/sumo/baseline/contracts';
+			const files = ["C:/Users/Test/sumo-tool/sumo/baseline/contracts/CovertLib.sol", "C:/Users/Test/sumo-tool/sumo/baseline/contracts/MetaCoin.sol"];
 			expect(removeDirPathFromMultipleFilesPath(dirPath, files)).to.deep.equal(["/CovertLib.sol", "/MetaCoin.sol"]);
 	
 		});

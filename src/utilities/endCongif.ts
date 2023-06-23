@@ -60,7 +60,7 @@ export function endConfigMutationOperators(sumoPath: string, jsonOperators: stri
             vscode.window.showInformationMessage("Mutation operators set correctly!");
         }
         catch (err) {
-            vscode.window.showErrorMessage("ERROR: Something went wrong!");
+            vscode.window.showErrorMessage("ERROR: Something went wrong! " + err);
         }
     }
     else{
