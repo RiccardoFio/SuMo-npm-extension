@@ -1,7 +1,7 @@
-import { readdirSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
 import { liveDecorationType, multipleVariantsDecorationType, variantDecorationType, variantDiagnostics } from '../extension';
-import { filterFiles, win32PathConverter } from './getFilesPath';
+import { win32PathConverter } from './getFilesPath';
 
 let timeout: NodeJS.Timer | undefined = undefined;
 
@@ -11,7 +11,6 @@ let activeDocument: vscode.TextDocument;
 
 let projectDir: string | undefined = undefined;
 
-const filters: string[] = [".json"];
 let filteredFiles: string[] = [];
 
 let allVariantsJson: any[] = [];
@@ -32,33 +31,23 @@ export async function showResultsVariants(projectPath: string, operatorsStatus: 
 	filteredFiles = [];
 	page = 0;
 
-	let promiseArr: any[] = [];
-
 	if (operatorsStatus.length > 0) {
 		try {
 			operatorsStatus.forEach(status => {
-				//find all files recursively in a directory
-				let operatorsToShowPath = projectPath + '/sumo/results/' + status + '/';
-				let allOperators = readdirSync(operatorsToShowPath);
-				//filter the files list
-				filters.forEach(filter => {
-					filteredFiles = filterFiles(filter, allOperators);
-				});
+				const selectedstatus = status === "toBeTested" ? null : status;
+				//Read results from mutation.json file
+				let allOperators2 = readJsonFile(projectPath + '/sumo/results/mutations.json');
 
-				promiseArr = promiseArr.concat(filteredFiles.map(async function (resource) {
-					const res = await readJsonFile(operatorsToShowPath + resource);
-					return res;
-				}));
+				for( let contract in allOperators2) {
+					allOperators2[contract].forEach((mutation: any) => {
+						if(mutation.status === selectedstatus) {
+							allVariantsJson.push(mutation);
+						}
+					});
+				}
 			});
-
-			await Promise.all(promiseArr).then(function (resultsArray) {
-				allVariantsJson = resultsArray;
-			}).catch(function (err) {
-				console.log("error: " + err);
-			});
-
 		} catch {
-			vscode.window.showErrorMessage("ERROR: 'sumo/results/' folder/subfolders does not exist!");
+			vscode.window.showErrorMessage("ERROR: '/sumo/results/mutations.json' file does not exist!");
 		}
 	}
 	if (activeEditor) {
@@ -188,7 +177,7 @@ export function turnPage() {
 	}
 }
 
-async function readJsonFile(path: string) {
+function readJsonFile(path: string) {
 	const file = readFileSync(path, 'utf8');
 	return JSON.parse(file);
 }
@@ -197,7 +186,7 @@ function createDiagnostic(range: vscode.Range, variant: any): vscode.Diagnostic 
 	const message = `Operator: ` + (variant.operator).trim() +
 		`, \nOriginal: ` + (variant.original).trim() +
 		`, \nReplacement: ` + (variant.replace).trim() +
-		`, \nStatus: ` + (variant.status).trim();
+		`, \nStatus: ` + (variant.status);
 	const diagnostic = new vscode.Diagnostic(
 		range,
 		message,

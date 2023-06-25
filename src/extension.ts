@@ -183,7 +183,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const showResultsCommand = vscode.commands.registerCommand("sumo-tool.showResultsCommand", async () => {
     if (projectDir !== "undefined") {
       const choose = await vscode.window.showQuickPick(
-        ["live", "equivalent", "redundant", "stillborn", "killed"],
+        ["toBeTested", "live", "equivalent", "redundant", "stillborn", "killed"],
         {
           placeHolder: "Which operators results you want to view in the editor?",
           canPickMany: true,
