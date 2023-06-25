@@ -123,52 +123,65 @@ export class ConfigurationComponent {
 
   async initializeConfig() {
     const elementConfig = document.getElementById("actualConfig") as HTMLInputElement;
-    const actualConfig = JSON.parse(elementConfig.value);
-    document.getElementById('testingTimeOutInSec')?.setAttribute("value", actualConfig.testingTimeOutInSec);
-    const networkSelect = document.getElementById('network') as HTMLSelectElement | null;
-    for (let index = 0; index < (networkSelect ? networkSelect.options.length : 0); index++) {
-      if (networkSelect != null)
-        if (networkSelect.options[index]?.ariaLabel == actualConfig.network)
-          networkSelect.selectedIndex = index;
+    if (elementConfig.value !== undefined) {
+      const actualConfig = JSON.parse(elementConfig.value);
+      document.getElementById('testingTimeOutInSec')?.setAttribute("value", actualConfig.testingTimeOutInSec);
+      const networkSelect = document.getElementById('network') as HTMLSelectElement | null;
+      for (let index = 0; index < (networkSelect ? networkSelect.options.length : 0); index++) {
+        if (networkSelect != null)
+          if (networkSelect.options[index]?.ariaLabel == actualConfig.network)
+            networkSelect.selectedIndex = index;
+      }
+      const frameworkSelect = document.getElementById('testingFramework') as HTMLSelectElement | null;
+      for (let index = 0; index < (frameworkSelect ? frameworkSelect.options.length : 0); index++) {
+        if (frameworkSelect != null)
+          if (frameworkSelect.options[index]?.ariaLabel == actualConfig.testingFramework)
+            frameworkSelect.selectedIndex = index;
+      }
+      if (actualConfig.minimal) {
+        document.getElementsByName('minimal')[0].ariaChecked = "true";
+        document.getElementsByName('minimal')[0].setAttribute("current-checked", "true");
+        document.getElementsByName('minimal')[1].ariaChecked = "false";
+        document.getElementsByName('minimal')[1].setAttribute("current-checked", "false");
+      } else if (!actualConfig.minimal) {
+        document.getElementsByName('minimal')[0].ariaChecked = "false";
+        document.getElementsByName('minimal')[0].setAttribute("current-checked", "false");
+        document.getElementsByName('minimal')[1].ariaChecked = "true";
+        document.getElementsByName('minimal')[1].setAttribute("current-checked", "true");
+      }
+      if (actualConfig.tce) {
+        document.getElementsByName('tce')[0].ariaChecked = "true";
+        document.getElementsByName('tce')[0].setAttribute("current-checked", "true");
+        document.getElementsByName('tce')[1].ariaChecked = "false";
+        document.getElementsByName('tce')[1].setAttribute("current-checked", "false");
+      } else if (!actualConfig.tce) {
+        document.getElementsByName('tce')[0].ariaChecked = "false";
+        document.getElementsByName('tce')[0].setAttribute("current-checked", "false");
+        document.getElementsByName('tce')[1].ariaChecked = "true";
+        document.getElementsByName('tce')[1].setAttribute("current-checked", "true");
+      }
+      if (actualConfig.historyActive) {
+        document.getElementsByName('historyActive')[0].ariaChecked = "true";
+        document.getElementsByName('historyActive')[0].setAttribute("current-checked", "true");
+        document.getElementsByName('historyActive')[1].ariaChecked = "false";
+        document.getElementsByName('historyActive')[1].setAttribute("current-checked", "false");
+      } else if (!actualConfig.historyActive) {
+        document.getElementsByName('historyActive')[0].ariaChecked = "false";
+        document.getElementsByName('historyActive')[0].setAttribute("current-checked", "false");
+        document.getElementsByName('historyActive')[1].ariaChecked = "true";
+        document.getElementsByName('historyActive')[1].setAttribute("current-checked", "true");
+      }
+      //delay to avoid that ngx-treeview element at the start empty the skip arrays
+      await this.delay(500);
+      //check the contracts that were excluded and put them in the skipContracts array
+      actualConfig.skipContracts.forEach((contract: string) => {
+        this.checkTrueIfPathIsPresent(this.contracts, this.skipContracts, contract);
+      });
+      //check the tests that were excluded and put them in the skipTests array
+      actualConfig.skipTests.forEach((test: string) => {
+        this.checkTrueIfPathIsPresent(this.tests, this.skipTests, test);
+      });
     }
-    const frameworkSelect = document.getElementById('testingFramework') as HTMLSelectElement | null;
-    for (let index = 0; index < (frameworkSelect ? frameworkSelect.options.length : 0); index++) {
-      if (frameworkSelect != null)
-        if (frameworkSelect.options[index]?.ariaLabel == actualConfig.testingFramework)
-          frameworkSelect.selectedIndex = index;
-    }
-    if (actualConfig.minimal) {
-      document.getElementsByName('minimal')[0].ariaChecked = "true";
-      document.getElementsByName('minimal')[0].setAttribute("current-checked", "true");
-      document.getElementsByName('minimal')[1].ariaChecked = "false";
-      document.getElementsByName('minimal')[1].setAttribute("current-checked", "false");
-    } else if (!actualConfig.minimal) {
-      document.getElementsByName('minimal')[0].ariaChecked = "false";
-      document.getElementsByName('minimal')[0].setAttribute("current-checked", "false");
-      document.getElementsByName('minimal')[1].ariaChecked = "true";
-      document.getElementsByName('minimal')[1].setAttribute("current-checked", "true");
-    }
-    if (actualConfig.tce) {
-      document.getElementsByName('tce')[0].ariaChecked = "true";
-      document.getElementsByName('tce')[0].setAttribute("current-checked", "true");
-      document.getElementsByName('tce')[1].ariaChecked = "false";
-      document.getElementsByName('tce')[1].setAttribute("current-checked", "false");
-    } else if (!actualConfig.tce) {
-      document.getElementsByName('tce')[0].ariaChecked = "false";
-      document.getElementsByName('tce')[0].setAttribute("current-checked", "false");
-      document.getElementsByName('tce')[1].ariaChecked = "true";
-      document.getElementsByName('tce')[1].setAttribute("current-checked", "true");
-    }
-    //delay to avoid that ngx-treeview element at the start empty the skip arrays
-    await this.delay(500);
-    //check the contracts that were excluded and put them in the skipContracts array
-    actualConfig.skipContracts.forEach((contract: string) => {
-      this.checkTrueIfPathIsPresent(this.contracts, this.skipContracts, contract);
-    });
-    //check the tests that were excluded and put them in the skipTests array
-    actualConfig.skipTests.forEach((test: string) => {
-      this.checkTrueIfPathIsPresent(this.tests, this.skipTests, test);
-    });
   }
 
   delay(ms: number) {
@@ -177,9 +190,7 @@ export class ConfigurationComponent {
 
   openExplorer(dir: string) {
     const projectDir = document.getElementById('projectDir') as HTMLInputElement | null;
-    const message: string = JSON.stringify({dir: dir, projectDir: projectDir?.value});
-
-    console.log(message);
+    const message: string = JSON.stringify({ dir: dir, projectDir: projectDir?.value });
 
     vscode.postMessage({
       command: "openExplorer",
@@ -199,23 +210,32 @@ export class ConfigurationComponent {
     const testingFramework = testingFrameworkSelect?.options[testingFrameworkSelect?.selectedIndex];
     const minimal: string = this.getOption('minimal');
     const tce: string = this.getOption('tce');
-    
-    vscode.postMessage({
-      command: "endConfig",
-      text: [
-        projectDir?.value,
-        buildDir?.value,
-        contractsDir?.value,
-        testDir?.value,
-        this.skipContracts,
-        this.skipTests,
-        testingTimeOutInSec?.value,
-        network?.text,
-        testingFramework?.text,
-        minimal == "Yes" ? true : false,
-        tce == "Yes" ? true : false,
-      ]
-    });
+    const historyActive: string = this.getOption('historyActive');    
+
+    if (minimal === "" || tce === "" || historyActive === "") {
+      vscode.postMessage({
+        command: "endConfig",
+        text: [""]
+      });
+    } else {
+      vscode.postMessage({
+        command: "endConfig",
+        text: [
+          projectDir?.value,
+          buildDir?.value,
+          contractsDir?.value,
+          testDir?.value,
+          this.skipContracts,
+          this.skipTests,
+          testingTimeOutInSec?.value,
+          network?.text,
+          testingFramework?.text,
+          minimal == "Yes" ? true : false,
+          tce == "Yes" ? true : false,
+          historyActive == "Yes" ? true : false,
+        ]
+      });
+    }
   }
 
   private getOption(option: string): string {

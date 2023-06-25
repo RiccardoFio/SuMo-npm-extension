@@ -40,7 +40,8 @@ suite('SuMo Extension Test Suite', () => {
                 network: 'ganache',
                 testingFramework: 'truffle',
                 minimal: true,
-                tce: false
+                tce: false,
+                historyActive: true
             }`.replace(/\s/g, '').trim();
 
             let actualFileContent = fs.readFileSync(fakeSumoPath + "/sumo-config.js", 'utf8').replace(/\s/g, '').trim();

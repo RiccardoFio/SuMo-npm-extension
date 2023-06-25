@@ -81,6 +81,12 @@
     <vscode-radio name="tce">No</vscode-radio>
   </vscode-radio-group>
 
+  <vscode-radio-group orientation="vertical">
+    <label slot="label">historyActive:</label>
+    <vscode-radio name="historyActive">Yes</vscode-radio>
+    <vscode-radio name="historyActive">No</vscode-radio>
+  </vscode-radio-group>
+
   <vscode-button id="end-config" appearance="primary" (click)="endConfig()">End configuration</vscode-button>
 
   <vscode-text-area id="actualConfig" rows="20" cols="50" hidden></vscode-text-area>
