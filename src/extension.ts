@@ -12,6 +12,7 @@ export let extensionUri: vscode.Uri;
 export let multipleVariantsDecorationType: vscode.TextEditorDecorationType;
 export let liveDecorationType: vscode.TextEditorDecorationType;
 export let variantDecorationType: vscode.TextEditorDecorationType;
+export let toBeTestedDecorationType: vscode.TextEditorDecorationType;
 
 export const variantDiagnostics = vscode.languages.createDiagnosticCollection("variants");
 
@@ -56,6 +57,12 @@ export async function activate(context: vscode.ExtensionContext) {
   // create a decorator type that we use to decorate variants
   variantDecorationType = vscode.window.createTextEditorDecorationType({
     gutterIconPath: vscode.Uri.joinPath(extensionUri, "assets", "variants-sumo.png"),
+    gutterIconSize: "contain"
+  });
+
+  // create a decorator type that we use to decorate toBeTested mutators
+  toBeTestedDecorationType = vscode.window.createTextEditorDecorationType({
+    gutterIconPath: vscode.Uri.joinPath(extensionUri, "assets", "toBeTested-sumo.png"),
     gutterIconSize: "contain"
   });
 

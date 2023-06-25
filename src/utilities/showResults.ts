@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
-import { liveDecorationType, multipleVariantsDecorationType, variantDecorationType, variantDiagnostics } from '../extension';
+import { liveDecorationType, multipleVariantsDecorationType, variantDecorationType, toBeTestedDecorationType, variantDiagnostics } from '../extension';
 import { win32PathConverter } from './getFilesPath';
 
 let timeout: NodeJS.Timer | undefined = undefined;
@@ -63,6 +63,7 @@ function updateDecorations() {
 		activeEditor.setDecorations(vscode.window.createTextEditorDecorationType({}), []);
 		const foundVariants: vscode.DecorationOptions[] = [];
 		const foundLive: vscode.DecorationOptions[] = [];
+		const foundTBT: vscode.DecorationOptions[] = [];
 		var pathElements: string[];
 		var projectPathBaseDir: string = "";
 
@@ -85,19 +86,27 @@ function updateDecorations() {
 					const decoration = {
 						range: new vscode.Range(startPos, startPos)
 					};
-					variant.status === "live" ? foundLive.push(decoration) : foundVariants.push(decoration);
+
+					switch (variant.status) {
+						case "live": foundLive.push(decoration); break;
+						case null: foundTBT.push(decoration); break;
+						default: foundVariants.push(decoration); break;
+					}
 				}
 			});
 			vscode.window.showInformationMessage(`INFO: You're visualizing page ${page + 1} out of ${lastPage + 1}!`);
 		}
 		
-		if (liveDecorationType && variantDecorationType) {
+		if (liveDecorationType && variantDecorationType && multipleVariantsDecorationType && toBeTestedDecorationType) {
 
 			//set decorations on line where there are multiple mutators
-			activeEditor?.setDecorations(multipleVariantsDecorationType, filterMoreVariantsSameLine(foundVariants.concat(foundLive)));
+			activeEditor?.setDecorations(multipleVariantsDecorationType, filterMoreVariantsSameLine(foundVariants.concat(foundLive).concat(foundTBT)));
 
 			//set decorations on LIVE mutators live
 			activeEditor?.setDecorations(liveDecorationType, foundLive);
+
+			//set decorations on 'toBeTested' mutators live
+			activeEditor?.setDecorations(toBeTestedDecorationType, foundTBT);
 
 			//set decorations only if there is no LIVE mutators in the same line
 			activeEditor?.setDecorations(variantDecorationType, foundVariants.filter(function (entry1) {
