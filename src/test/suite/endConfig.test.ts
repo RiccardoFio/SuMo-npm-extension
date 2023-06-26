@@ -26,7 +26,7 @@ suite('SuMo Extension Test Suite', () => {
         test('Should write into the config.js file based on the user preferences', () => {
             fs.writeFileSync(fakeSumoPath + '/sumo-config.js', "");
             let config: any[] = [fakeSumoPath, 'build', 'contracts', 'test', ['Migrations.sol'],
-                ["TestMetaCoin.sol"], '3000', 'ganache', 'truffle', true, false];
+                ["TestMetaCoin.sol"], '3000', 'ganache', 'truffle', true, false, true];
 
             endConfig(config);
 
