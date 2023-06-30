@@ -2,7 +2,7 @@
   "name": "sumo-extension",
   "displayName": "SuMo extension",
   "description": "An extension to help developers to use and configure the SuMo tool.",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "icon": "assets/icona-sumo.png",
   "repository": {
     "type": "git",

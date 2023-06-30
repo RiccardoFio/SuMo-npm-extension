@@ -1,8 +1,8 @@
-import { readFileSync } from 'fs';
+import { readdirSync, readFileSync } from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { liveDecorationType, multipleVariantsDecorationType, variantDecorationType, toBeTestedDecorationType, variantDiagnostics } from '../extension';
-import { win32PathConverter } from './getFilesPath';
+import { liveDecorationType, multipleVariantsDecorationType, variantDecorationType, variantDiagnostics } from '../extension';
+import { filterFiles, win32PathConverter } from './getFilesPath';
 
 let timeout: NodeJS.Timer | undefined = undefined;
 
@@ -12,6 +12,7 @@ let activeDocument: vscode.TextDocument;
 
 let projectDir: string | undefined = undefined;
 
+const filters: string[] = [".json"];
 let filteredFiles: string[] = [];
 
 let allVariantsJson: any[] = [];
@@ -32,23 +33,33 @@ export async function showResultsVariants(projectPath: string, operatorsStatus: 
 	filteredFiles = [];
 	page = 0;
 
+	let promiseArr: any[] = [];
+
 	if (operatorsStatus.length > 0) {
 		try {
 			operatorsStatus.forEach(status => {
-				const selectedstatus = status === "toBeTested" ? null : status;
-				//Read results from mutation.json file
-				let allOperators2 = readJsonFile(projectPath + '/sumo/results/mutations.json');
+				//find all files recursively in a directory
+				let operatorsToShowPath = projectPath + '/.sumo/results/' + status + '/';
+				let allOperators = readdirSync(operatorsToShowPath);
+				//filter the files list
+				filters.forEach(filter => {
+					filteredFiles = filterFiles(filter, allOperators);
+				});
 
-				for (let contract in allOperators2) {
-					allOperators2[contract].forEach((mutation: any) => {
-						if (mutation.status === selectedstatus) {
-							allVariantsJson.push(mutation);
-						}
-					});
-				}
+				promiseArr = promiseArr.concat(filteredFiles.map(async function (resource) {
+					const res = await readJsonFile(operatorsToShowPath + resource);
+					return res;
+				}));
 			});
+
+			await Promise.all(promiseArr).then(function (resultsArray) {
+				allVariantsJson = resultsArray;
+			}).catch(function (err) {
+				console.log("error: " + err);
+			});
+
 		} catch {
-			vscode.window.showErrorMessage("ERROR: '/sumo/results/mutations.json' file does not exist!");
+			vscode.window.showErrorMessage("ERROR: '.sumo/results/' folder/subfolders does not exist!");
 		}
 	}
 	if (activeEditor) {
@@ -64,7 +75,6 @@ function updateDecorations() {
 		activeEditor.setDecorations(vscode.window.createTextEditorDecorationType({}), []);
 		const foundVariants: vscode.DecorationOptions[] = [];
 		const foundLive: vscode.DecorationOptions[] = [];
-		const foundTBT: vscode.DecorationOptions[] = [];
 		var pathElements: string[];
 		var projectPathBaseDir: string = "";
 
@@ -75,6 +85,7 @@ function updateDecorations() {
 
 		if (toShowVariantsJson.length > 0) {
 			toShowVariantsJson[page].forEach(variant => {
+
 				let variantFileName = path.basename(variant.file);
 
 				if (activeEditorFilename?.toLowerCase().endsWith(variantFileName.toLowerCase())) {
@@ -88,27 +99,19 @@ function updateDecorations() {
 					const decoration = {
 						range: new vscode.Range(startPos, startPos)
 					};
-
-					switch (variant.status) {
-						case "live": foundLive.push(decoration); break;
-						case null: foundTBT.push(decoration); break;
-						default: foundVariants.push(decoration); break;
-					}
+					variant.status === "live" ? foundLive.push(decoration) : foundVariants.push(decoration);
 				}
 			});
 			vscode.window.showInformationMessage(`INFO: You're visualizing page ${page + 1} out of ${lastPage + 1}!`);
 		}
 
-		if (liveDecorationType && variantDecorationType && multipleVariantsDecorationType && toBeTestedDecorationType) {
+		if (liveDecorationType && variantDecorationType) {
 
 			//set decorations on line where there are multiple mutators
-			activeEditor?.setDecorations(multipleVariantsDecorationType, filterMoreVariantsSameLine(foundVariants.concat(foundLive).concat(foundTBT)));
+			activeEditor?.setDecorations(multipleVariantsDecorationType, filterMoreVariantsSameLine(foundVariants.concat(foundLive)));
 
 			//set decorations on LIVE mutators live
 			activeEditor?.setDecorations(liveDecorationType, foundLive);
-
-			//set decorations on 'toBeTested' mutators live
-			activeEditor?.setDecorations(toBeTestedDecorationType, foundTBT);
 
 			//set decorations only if there is no LIVE mutators in the same line
 			activeEditor?.setDecorations(variantDecorationType, foundVariants.filter(function (entry1) {
@@ -188,7 +191,7 @@ export function turnPage() {
 	}
 }
 
-function readJsonFile(path: string) {
+async function readJsonFile(path: string) {
 	const file = readFileSync(path, 'utf8');
 	return JSON.parse(file);
 }
@@ -197,7 +200,7 @@ function createDiagnostic(range: vscode.Range, variant: any): vscode.Diagnostic 
 	const message = `Operator: ` + (variant.operator).trim() +
 		`, \nOriginal: ` + (variant.original).trim() +
 		`, \nReplacement: ` + (variant.replace).trim() +
-		`, \nStatus: ` + (variant.status);
+		`, \nStatus: ` + (variant.status).trim();
 	const diagnostic = new vscode.Diagnostic(
 		range,
 		message,

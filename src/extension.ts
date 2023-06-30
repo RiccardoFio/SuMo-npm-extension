@@ -145,7 +145,7 @@ export async function activate(context: vscode.ExtensionContext) {
       if (checkSuMoPath(sumoPath) && checkSuMoConfig(projectDir)) {
 
         const command = await vscode.window.showQuickPick(
-          ["preflight", "mutate", "pretest", "test", "diff", "restore"],
+          ["lookup", "mutate", "pretest", "test", "diff", "restore"],
           {
             placeHolder: "Run SuMo",
             canPickMany: false,
@@ -155,7 +155,7 @@ export async function activate(context: vscode.ExtensionContext) {
         });
 
         switch (command) {
-          case 'preflight':
+          case 'lookup':
             runSumoCommand(sumoPath, command);
             break;
           case 'mutate':
