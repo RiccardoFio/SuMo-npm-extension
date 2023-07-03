@@ -193,7 +193,7 @@ function readJsonFile(path: string) {
 
 function createDiagnostic(range: vscode.Range, variant: any): vscode.Diagnostic {
 	const message = `Operator: ` + (variant.operator).trim() +
-		`, \nOriginal: ` + (variant.original).trim() +
+		`, \nOriginal:` + " 20 | \tfunction sendCoin(address receiver, uint amount) public returns(bool sufficient) {\n  21 | \t\tif (balances[msg.sender] < amount) return false;\n  22 | ---\t\tbalances[msg.sender] -= amount;\n     | +++\t\tbalances[msg.sender]  = amount;\n  23 | \t\tbalances[receiver] += amount;\n  24 | \t\temit Transfer(msg.sender, receiver, amount);\n" +
 		`, \nReplacement: ` + (variant.replace).trim() +
 		`, \nStatus: ` + (variant.status);
 	const diagnostic = new vscode.Diagnostic(

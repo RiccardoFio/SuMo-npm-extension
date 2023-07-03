@@ -51,7 +51,7 @@ function showResults(projectPath: string) {
                 if (reportEnd.includes("SuMo test done")) { showResultsVariants(projectPath, ['live']); }
             } catch (error) { }
             break;
-        /*case "preflight":
+        /*case "lookup":
             var setting: vscode.Uri = vscode.Uri.parse("file:" + projectPath + "/sumo/results/generated.csv");
             vscode.workspace.openTextDocument(setting).then((a: vscode.TextDocument) => {
                 vscode.window.showTextDocument(a, 1, false);
