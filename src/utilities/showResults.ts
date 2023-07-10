@@ -195,9 +195,10 @@ function readJsonFile(path: string) {
 
 function createDiagnostic(range: vscode.Range, variant: any): vscode.Diagnostic {
 	const message = `Operator: ` + (variant.operator).trim() +
-		`, \nOriginal: ` + (variant.original).trim() +
-		`, \nReplacement: ` + (variant.replace).trim() +
-		`, \nStatus: ` + (variant.status);
+		`\nDifferences:\n` + (variant.diff) +
+		`\nOriginal: ` + (variant.original).trim() +
+		`\nReplacement: ` + (variant.replace).trim() +
+		`\nStatus: ` + (variant.status);
 	const diagnostic = new vscode.Diagnostic(
 		range,
 		message,
