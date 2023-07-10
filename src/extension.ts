@@ -66,10 +66,18 @@ export async function activate(context: vscode.ExtensionContext) {
     gutterIconSize: "contain"
   });
 
-  // listner to refresh decoration on active editor
+  // listener to refresh decoration on active editor
   vscode.window.onDidChangeActiveTextEditor(editor => {
     if (editor) {
-      editorChanged(editor);
+      //set directories path using open project on workspace
+      try {
+        //take project folder open in workspace
+        const wf = vscode.workspace.workspaceFolders;
+        if (wf !== undefined) {
+          projectDir = win32PathConverter(wf[0].uri.path);
+          editorChanged(editor, projectDir);
+        }
+      } catch (err) { }
     }
   }, null, context.subscriptions);
 

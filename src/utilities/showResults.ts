@@ -52,7 +52,7 @@ export async function showResultsVariants(projectPath: string, operatorsStatus: 
 		}
 	}
 	if (activeEditor) {
-		editorChanged(activeEditor);
+		editorChanged(activeEditor, projectDir);
 	}
 }
 
@@ -141,13 +141,13 @@ function triggerUpdateDecorations(throttle = false) {
 	}
 }
 
-export function editorChanged(editor: vscode.TextEditor) {
+export function editorChanged(editor: vscode.TextEditor, projectDir: string) {
 	if (editor) {
 		activeEditor = editor;
 		activeEditorFilename = win32PathConverter(editor.document.fileName);
 		activeDocument = editor.document;
 
-		const pathElements = projectDir!.replace(/\/$/, '').split('/');
+		const pathElements = projectDir.replace(/\/$/, '').split('/');
 		const projectPathBaseDir = pathElements[pathElements.length - 1];
 
 		filterVariantsPerFile(activeEditor.document.uri.path.split(projectPathBaseDir)[1]);
